@@ -3,7 +3,7 @@ import java.io.IOException;
 
 public class Lexer {
     private enum State {
-        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, ESy, EDe, ENu, EAs, ECo, ELE, ELT, EGE, EGT, EOF
+        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, ESy, EDe, ENu, EAs, ECo, ELE, ELT, EGE, EGT
     }
 
     private enum CharacterType {
@@ -42,6 +42,12 @@ public class Lexer {
 
     private FileReader reader;
 
+    private int readRow = 1;
+    private int readColumn = 0;
+    private int tokenRow;
+    private int tokenColumn;
+
+
     private Token current;
     private Token next;
 
@@ -62,6 +68,9 @@ public class Lexer {
         current = next;
 
         boolean end = false;
+
+        tokenRow = readRow;
+        tokenColumn = readColumn;
 
         currentState = State.Z_0;
         currentString = "";
@@ -101,10 +110,18 @@ public class Lexer {
     private void read(){
         try {
             int readValue = reader.read();
+            readColumn++;
             if(readValue == -1)
                 eof = true;
-            else
+            else {
                 currentChar = (char) readValue;
+                if(currentChar == '\n'){
+                    readRow++;
+                    readColumn = 0;
+                }
+                if(currentChar == '\r')
+                    readColumn = 0;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -121,12 +138,12 @@ public class Lexer {
         switch (currentState){
             case EDe:
                 if(isKeyword(currentString))
-                    next = new Token(Token.TokenType.KEYWORD, currentString);
+                    next = new Token(Token.TokenType.KEYWORD, currentString, tokenRow, tokenColumn);
                 else
-                    next = new Token(Token.TokenType.IDENTIFIER, currentString);
+                    next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
                 break;
             case ENu:
-                next = new Token(Token.TokenType.NUMERAL, Long.parseLong(currentString));
+                next = new Token(Token.TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
                 break;
             case ESy:
             case EAs:
@@ -135,7 +152,7 @@ public class Lexer {
             case ELT:
             case EGE:
             case EGT:
-                next = new Token(Token.TokenType.OPERATOR, currentString);
+                next = new Token(Token.TokenType.OPERATOR, currentString, tokenRow, tokenColumn);
                 break;
         }
 

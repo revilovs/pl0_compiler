@@ -6,24 +6,31 @@ public class Token {
     private String stringValue;
     private long numberValue;
 
+    private int row;
+    private int column;
+
     public static final Token EOF_TOKEN = new Token();
 
-    public Token(TokenType type, long numberValue){
+    public Token(TokenType type, long numberValue, int row, int column){
         if (type != TokenType.NUMERAL){
             //TODO: fix
             return;
         }
         this.type = type;
         this.numberValue = numberValue;
+        this.row = row;
+        this.column = column;
     }
 
-    public Token(TokenType type, String stringValue){
+    public Token(TokenType type, String stringValue, int row, int column){
         if (type == TokenType.NUMERAL){
             //TODO: fix
             return;
         }
         this.type = type;
         this.stringValue = stringValue;
+        this.row = row;
+        this.column = column;
     }
 
     private Token(){
@@ -42,6 +49,14 @@ public class Token {
         return numberValue;
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
     @Override
     public String toString() {
         String value;
@@ -54,10 +69,13 @@ public class Token {
             case NUMERAL:
                 value = "" + getNumberValue();
                 break;
+            case EOF:
+                value = "End of file";
+                break;
             default:
                 value = "undefined";
 
         }
-        return type.toString() + " " + value;
+        return type.toString() + " " + value + " at " + row + "," + column;
     }
 }
