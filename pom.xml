@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.htw_dresden.informatik.s75924</groupId>
-    <artifactId>pl0-compiler</artifactId>
+    <artifactId>pl0_compiler</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     
