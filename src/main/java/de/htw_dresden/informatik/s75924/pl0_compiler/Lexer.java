@@ -48,17 +48,17 @@ public class Lexer {
 
     static {
         Map<String, Character> map = new HashMap<>();
-        map.put("BEGIN", Token.KW_BEGIN);
-        map.put("CALL", Token.KW_CALL);
-        map.put("CONST", Token.KW_CONST);
-        map.put("DO", Token.KW_DO);
-        map.put("END", Token.KW_END);
-        map.put("IF", Token.KW_IF);
-        map.put("ODD", Token.KW_ODD);
-        map.put("PROCEDURE", Token.KW_PROCEDURE);
-        map.put("THEN", Token.KW_THEN);
-        map.put("VAR", Token.KW_VAR);
-        map.put("WHILE", Token.KW_WHILE);
+        map.put("BEGIN", CharValues.BEGIN.value);
+        map.put("CALL", CharValues.CALL.value);
+        map.put("CONST", CharValues.CONST.value);
+        map.put("DO", CharValues.DO.value);
+        map.put("END", CharValues.END.value);
+        map.put("IF", CharValues.IF.value);
+        map.put("ODD", CharValues.ODD.value);
+        map.put("PROCEDURE", CharValues.PROCEDURE.value);
+        map.put("THEN", CharValues.THEN.value);
+        map.put("VAR", CharValues.VAR.value);
+        map.put("WHILE", CharValues.WHILE.value);
 
         keywordMap = map;
     }
@@ -222,11 +222,11 @@ public class Lexer {
 
     private static char getOperatorChar(String string){
         if (string.equals("<="))
-            return Token.LESS_OR_EQUAL;
+            return CharValues.LESS_OR_EQUAL.value;
         if (string.equals(":="))
-            return Token.ASSIGN;
+            return CharValues.ASSIGN.value;
         if (string.equals(">="))
-            return Token.GREATER_OR_EQUAL;
+            return CharValues.GREATER_OR_EQUAL.value;
 
         return string.charAt(0);
     }
