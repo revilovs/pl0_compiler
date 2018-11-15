@@ -1,10 +1,12 @@
 public class Token {
     enum TokenType {
-        EMPTY, KEYWORD, NUMERAL, OPERATOR, IDENTIFIER
+        KEYWORD, NUMERAL, OPERATOR, IDENTIFIER, EOF
     }
     private TokenType type;
     private String stringValue;
     private long numberValue;
+
+    public static final Token EOF_TOKEN = new Token();
 
     public Token(TokenType type, long numberValue){
         if (type != TokenType.NUMERAL){
@@ -24,6 +26,10 @@ public class Token {
         this.stringValue = stringValue;
     }
 
+    private Token(){
+        type = TokenType.EOF;
+    }
+
     public TokenType getType() {
         return type;
     }
@@ -34,5 +40,24 @@ public class Token {
 
     public long getNumberValue() {
         return numberValue;
+    }
+
+    @Override
+    public String toString() {
+        String value;
+        switch (type){
+            case KEYWORD:
+            case OPERATOR:
+            case IDENTIFIER:
+                value = getStringValue();
+                break;
+            case NUMERAL:
+                value = "" + getNumberValue();
+                break;
+            default:
+                value = "undefined";
+
+        }
+        return type.toString() + " " + value;
     }
 }
