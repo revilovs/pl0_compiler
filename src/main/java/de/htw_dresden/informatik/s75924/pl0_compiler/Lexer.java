@@ -2,6 +2,8 @@ package de.htw_dresden.informatik.s75924.pl0_compiler;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Lexer {
     private enum State {
@@ -41,6 +43,25 @@ public class Lexer {
             /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA },
             /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA }
     };
+
+    private static final Map<String, Character> keywordMap;
+
+    static {
+        Map<String, Character> map = new HashMap<>();
+        map.put("BEGIN", Token.KW_BEGIN);
+        map.put("CALL", Token.KW_CALL);
+        map.put("CONST", Token.KW_CONST);
+        map.put("DO", Token.KW_DO);
+        map.put("END", Token.KW_END);
+        map.put("IF", Token.KW_IF);
+        map.put("ODD", Token.KW_ODD);
+        map.put("PROCEDURE", Token.KW_PROCEDURE);
+        map.put("THEN", Token.KW_THEN);
+        map.put("VAR", Token.KW_VAR);
+        map.put("WHILE", Token.KW_WHILE);
+
+        keywordMap = map;
+    }
 
     private FileReader reader;
 
@@ -137,29 +158,36 @@ public class Lexer {
     }
 
     private void end(){
-        switch (currentState){
-            case EDe:
-                if(isKeyword(currentString))
-                    next = new Token(Token.TokenType.KEYWORD, currentString, tokenRow, tokenColumn);
-                else
-                    next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
-                break;
-            case ENu:
-                next = new Token(Token.TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
-                break;
-            case ESy:
-            case EAs:
-            case ECo:
-            case ELE:
-            case ELT:
-            case EGE:
-            case EGT:
-                next = new Token(Token.TokenType.OPERATOR, currentString, tokenRow, tokenColumn);
-                break;
-        }
+        try {
+            switch (currentState) {
+                case EDe:
+                    if (isKeyword(currentString))
+                        next = new Token(Token.TokenType.KEYWORD, keywordMap.get(currentString), tokenRow, tokenColumn);
+                    else
+                        next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
+                    break;
+                case ENu:
+                    next = new Token(Token.TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
+                    break;
+                case ESy:
+                case EAs:
+                case ECo:
+                case ELE:
+                case ELT:
+                case EGE:
+                case EGT:
+                    next = new Token(Token.TokenType.SYMBOL, getOperatorChar(currentString), tokenRow, tokenColumn);
+                    break;
+            }
 
-        if(eof)
-            next = Token.EOF_TOKEN;
+            if (eof)
+                next = Token.EOF_TOKEN;
+        }
+        catch (InvalidTokenTypeException e){
+            e.printStackTrace();
+            System.err.println("Encountered InvalidTokenTypeException at " + tokenRow + ":" + tokenColumn);
+            System.exit(-1);
+        }
     }
 
     private static CharacterType getCharacterType(char character){
@@ -192,16 +220,18 @@ public class Lexer {
         return CharacterType.OTHER;
     }
 
+    private static char getOperatorChar(String string){
+        if (string.equals("<="))
+            return Token.LESS_OR_EQUAL;
+        if (string.equals(":="))
+            return Token.ASSIGN;
+        if (string.equals(">="))
+            return Token.GREATER_OR_EQUAL;
+
+        return string.charAt(0);
+    }
+
     private static boolean isKeyword(String string){
-        final String[] keywords = {
-                "BEGIN", "CALL", "CONST", "DO", "END", "IF", "ODD", "PROCEDURE", "THEN", "VAR", "WHILE"
-        };
-
-        for (String kewyword : keywords) {
-            if(string.equals(kewyword))
-                return true;
-        }
-
-        return false;
+        return keywordMap.get(string) != null;
     }
 }

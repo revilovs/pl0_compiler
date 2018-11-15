@@ -1,38 +1,62 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler;
 
 public class Token {
-    enum TokenType {
-        KEYWORD, NUMERAL, OPERATOR, IDENTIFIER, EOF
+    public enum TokenType {
+        KEYWORD, NUMERAL, SYMBOL, IDENTIFIER, EOF
     }
+
+    public static final char ASSIGN = 128;
+    public static final char LESS_OR_EQUAL = 129;
+    public static final char GREATER_OR_EQUAL = 130;
+    public static final char KW_BEGIN = 131;
+    public static final char KW_CALL = 132;
+    public static final char KW_CONST = 133;
+    public static final char KW_DO = 134;
+    public static final char KW_END = 135;
+    public static final char KW_IF = 136;
+    public static final char KW_ODD = 137;
+    public static final char KW_PROCEDURE = 138;
+    public static final char KW_THEN = 139;
+    public static final char KW_VAR = 140;
+    public static final char KW_WHILE = 141;
+
     private TokenType type;
-    private String stringValue;
-    private long numberValue;
+    private String stringValue = null;
+    private long numberValue = 0;
+    private char charValue = 0;
 
     private int row;
     private int column;
 
     public static final Token EOF_TOKEN = new Token();
 
-    public Token(TokenType type, long numberValue, int row, int column){
-        if (type != TokenType.NUMERAL){
-            //TODO: fix
-            return;
-        }
-        this.type = type;
-        this.numberValue = numberValue;
+    private Token(int row, int column){
         this.row = row;
         this.column = column;
     }
 
-    public Token(TokenType type, String stringValue, int row, int column){
-        if (type == TokenType.NUMERAL){
-            //TODO: fix
-            return;
+    public Token(TokenType type, long numberValue, int row, int column) throws InvalidTokenTypeException {
+        this(row, column);
+        if (type != TokenType.NUMERAL){
+            throw new InvalidTokenTypeException();
         }
         this.type = type;
+        this.numberValue = numberValue;
+    }
+
+    public Token(TokenType type, char charValue, int row, int column){
+        this(row, column);
+        this.type = type;
+        this.charValue = charValue;
+    }
+
+    public Token(TokenType type, String stringValue, int row, int column) throws InvalidTokenTypeException {
+        this(row, column);
+        if (type != TokenType.IDENTIFIER)
+            throw new InvalidTokenTypeException();
+
+        this.type = type;
         this.stringValue = stringValue;
-        this.row = row;
-        this.column = column;
     }
 
     private Token(){
@@ -51,6 +75,10 @@ public class Token {
         return numberValue;
     }
 
+    public char getCharValue() {
+        return charValue;
+    }
+
     public int getRow() {
         return row;
     }
@@ -64,7 +92,7 @@ public class Token {
         String value;
         switch (type){
             case KEYWORD:
-            case OPERATOR:
+            case SYMBOL:
             case IDENTIFIER:
                 value = getStringValue();
                 break;
@@ -78,6 +106,18 @@ public class Token {
                 value = "undefined";
 
         }
-        return type.toString() + " " + value + " at " + row + "," + column;
+        return type.toString() + " " + value + " at " + row + ":" + column;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(! (other instanceof Token))
+            return false;
+        Token otherToken = (Token) other;
+
+        return type == otherToken.type
+                && (stringValue == null ? otherToken.stringValue == null : stringValue.equals(otherToken.stringValue))
+                && charValue == otherToken.charValue
+                && numberValue == ((Token) other).numberValue;
     }
 }
