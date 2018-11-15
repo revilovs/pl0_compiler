@@ -2,8 +2,6 @@ package de.htw_dresden.informatik.s75924.pl0_compiler;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Lexer {
     private enum State {
@@ -43,25 +41,6 @@ public class Lexer {
             /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA },
             /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA }
     };
-
-    private static final Map<String, Character> keywordMap;
-
-    static {
-        Map<String, Character> map = new HashMap<>();
-        map.put("BEGIN", CharValues.BEGIN.value);
-        map.put("CALL", CharValues.CALL.value);
-        map.put("CONST", CharValues.CONST.value);
-        map.put("DO", CharValues.DO.value);
-        map.put("END", CharValues.END.value);
-        map.put("IF", CharValues.IF.value);
-        map.put("ODD", CharValues.ODD.value);
-        map.put("PROCEDURE", CharValues.PROCEDURE.value);
-        map.put("THEN", CharValues.THEN.value);
-        map.put("VAR", CharValues.VAR.value);
-        map.put("WHILE", CharValues.WHILE.value);
-
-        keywordMap = map;
-    }
 
     private FileReader reader;
 
@@ -162,7 +141,7 @@ public class Lexer {
             switch (currentState) {
                 case EDe:
                     if (isKeyword(currentString))
-                        next = new Token(Token.TokenType.KEYWORD, keywordMap.get(currentString), tokenRow, tokenColumn);
+                        next = new Token(Token.TokenType.KEYWORD, CharValues.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
                     else
                         next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
                     break;
@@ -232,6 +211,6 @@ public class Lexer {
     }
 
     private static boolean isKeyword(String string){
-        return keywordMap.get(string) != null;
+        return CharValues.stringCharacterMap.get(string) != null;
     }
 }

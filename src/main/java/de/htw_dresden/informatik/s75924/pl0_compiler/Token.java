@@ -80,6 +80,8 @@ public class Token {
         String value;
         switch (type){
             case KEYWORD:
+                value = CharValues.characterStringMap.get(charValue);
+                break;
             case SYMBOL:
                 value = "" + getCharValue();
                 break;
