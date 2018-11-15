@@ -141,7 +141,7 @@ public class Lexer {
             switch (currentState) {
                 case EDe:
                     if (isKeyword(currentString))
-                        next = new Token(Token.TokenType.KEYWORD, CharValues.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
+                        next = new Token(Token.TokenType.KEYWORD, SpecialCharacter.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
                     else
                         next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
                     break;
@@ -201,16 +201,16 @@ public class Lexer {
 
     private static char getOperatorChar(String string){
         if (string.equals("<="))
-            return CharValues.LESS_OR_EQUAL.value;
+            return SpecialCharacter.LESS_OR_EQUAL.value;
         if (string.equals(":="))
-            return CharValues.ASSIGN.value;
+            return SpecialCharacter.ASSIGN.value;
         if (string.equals(">="))
-            return CharValues.GREATER_OR_EQUAL.value;
+            return SpecialCharacter.GREATER_OR_EQUAL.value;
 
         return string.charAt(0);
     }
 
     private static boolean isKeyword(String string){
-        return CharValues.stringCharacterMap.get(string) != null;
+        return SpecialCharacter.stringCharacterMap.get(string) != null;
     }
 }

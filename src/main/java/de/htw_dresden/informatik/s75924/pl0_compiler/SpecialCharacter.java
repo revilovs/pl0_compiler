@@ -3,7 +3,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum CharValues {
+public enum SpecialCharacter {
     ASSIGN(128),
     LESS_OR_EQUAL(129),
     GREATER_OR_EQUAL(130),
@@ -21,7 +21,7 @@ public enum CharValues {
 
     char value;
 
-    CharValues(int value) {
+    SpecialCharacter(int value) {
         this.value = (char) value;
     }
 
@@ -32,7 +32,7 @@ public enum CharValues {
         stringCharacterMap = new HashMap<>();
         characterStringMap = new HashMap<>();
 
-        for (CharValues item : CharValues.values()) {
+        for (SpecialCharacter item : SpecialCharacter.values()) {
             stringCharacterMap.put(item.toString(), item.value);
             characterStringMap.put(item.value, item.toString());
         }

@@ -55,13 +55,13 @@ public class TokenTest {
     public void constructKeywordToken() {
         Token sut = null;
         try {
-            sut = new Token(Token.TokenType.KEYWORD, CharValues.VAR.value, 1, 1);
+            sut = new Token(Token.TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 1);
 
             Assert.assertEquals(Token.TokenType.KEYWORD, sut.getType());
             Assert.assertEquals(0, sut.getNumberValue());
             Assert.assertEquals(1, sut.getRow());
             Assert.assertEquals(1, sut.getColumn());
-            Assert.assertEquals(CharValues.VAR.value, sut.getCharValue());
+            Assert.assertEquals(SpecialCharacter.VAR.value, sut.getCharValue());
             Assert.assertNull(sut.getStringValue());
         } catch (InvalidTokenTypeException e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class TokenTest {
     @Test
     public void keywordTokenToString() {
         try {
-            Token sut = new Token(Token.TokenType.KEYWORD, CharValues.VAR.value, 1,1);
+            Token sut = new Token(Token.TokenType.KEYWORD, SpecialCharacter.VAR.value, 1,1);
 
             Assert.assertEquals("KEYWORD VAR at 1:1", sut.toString());
         } catch (InvalidTokenTypeException e) {
