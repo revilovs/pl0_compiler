@@ -1,5 +1,8 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler;
 
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
