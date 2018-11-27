@@ -2,6 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,7 +17,7 @@ public class PL0Compiler {
 
             Token token = lexer.getCurrentToken();
 
-            while (token.getType() != Token.TokenType.EOF) {
+            while (token.getType() != TokenType.EOF) {
                 System.out.println(token.toString());
                 lexer.lex();
                 token = lexer.getCurrentToken();

@@ -19,7 +19,7 @@ public enum SpecialCharacter {
     VAR(140),
     WHILE(141);
 
-    char value;
+    public char value;
 
     SpecialCharacter(int value) {
         this.value = (char) value;

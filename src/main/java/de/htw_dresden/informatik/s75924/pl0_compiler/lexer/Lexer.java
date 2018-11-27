@@ -141,12 +141,12 @@ public class Lexer {
             switch (currentState) {
                 case EDe:
                     if (isKeyword(currentString))
-                        next = new Token(Token.TokenType.KEYWORD, SpecialCharacter.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
+                        next = new Token(TokenType.KEYWORD, SpecialCharacter.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
                     else
-                        next = new Token(Token.TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
+                        next = new Token(TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
                     break;
                 case ENu:
-                    next = new Token(Token.TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
+                    next = new Token(TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
                     break;
                 case ESy:
                 case EAs:
@@ -155,7 +155,7 @@ public class Lexer {
                 case ELT:
                 case EGE:
                 case EGT:
-                    next = new Token(Token.TokenType.SYMBOL, getOperatorChar(currentString), tokenRow, tokenColumn);
+                    next = new Token(TokenType.SYMBOL, getOperatorChar(currentString), tokenRow, tokenColumn);
                     break;
             }
 

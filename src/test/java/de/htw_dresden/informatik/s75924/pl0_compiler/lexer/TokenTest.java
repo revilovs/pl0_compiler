@@ -9,9 +9,9 @@ public class TokenTest {
     @Test
     public void constructNumeralToken() {
         try {
-            Token sut = new Token(Token.TokenType.NUMERAL, 42, 1, 1);
+            Token sut = new Token(TokenType.NUMERAL, 42, 1, 1);
 
-            Assert.assertEquals(Token.TokenType.NUMERAL, sut.getType());
+            Assert.assertEquals(TokenType.NUMERAL, sut.getType());
             Assert.assertEquals(42, sut.getNumberValue());
             Assert.assertEquals(1, sut.getRow());
             Assert.assertEquals(1, sut.getColumn());
@@ -26,15 +26,15 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructNumeralTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(Token.TokenType.NUMERAL, 'A', 1, 1);
+        Token sut = new Token(TokenType.NUMERAL, 'A', 1, 1);
     }
 
     @Test
     public void constructSymbolToken() {
         try {
-            Token sut = new Token(Token.TokenType.SYMBOL, '+', 1, 1);
+            Token sut = new Token(TokenType.SYMBOL, '+', 1, 1);
 
-            Assert.assertEquals(Token.TokenType.SYMBOL, sut.getType());
+            Assert.assertEquals(TokenType.SYMBOL, sut.getType());
             Assert.assertEquals(0, sut.getNumberValue());
             Assert.assertEquals(1, sut.getRow());
             Assert.assertEquals(1, sut.getColumn());
@@ -48,16 +48,16 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructSymbolTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(Token.TokenType.SYMBOL, "+", 1, 1);
+        Token sut = new Token(TokenType.SYMBOL, "+", 1, 1);
     }
 
     @Test
     public void constructKeywordToken() {
         Token sut = null;
         try {
-            sut = new Token(Token.TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 1);
+            sut = new Token(TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 1);
 
-            Assert.assertEquals(Token.TokenType.KEYWORD, sut.getType());
+            Assert.assertEquals(TokenType.KEYWORD, sut.getType());
             Assert.assertEquals(0, sut.getNumberValue());
             Assert.assertEquals(1, sut.getRow());
             Assert.assertEquals(1, sut.getColumn());
@@ -71,15 +71,15 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructKeywordTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(Token.TokenType.KEYWORD, "VAR", 1 , 1);
+        Token sut = new Token(TokenType.KEYWORD, "VAR", 1 , 1);
     }
 
     @Test
     public void constructIdentifierToken() {
         try {
-            Token sut = new Token(Token.TokenType.IDENTIFIER, "X", 1, 1);
+            Token sut = new Token(TokenType.IDENTIFIER, "X", 1, 1);
 
-            Assert.assertEquals(Token.TokenType.IDENTIFIER, sut.getType());
+            Assert.assertEquals(TokenType.IDENTIFIER, sut.getType());
             Assert.assertEquals(0, sut.getNumberValue());
             Assert.assertEquals(1, sut.getRow());
             Assert.assertEquals(1, sut.getColumn());
@@ -92,14 +92,14 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructIdentifierTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(Token.TokenType.IDENTIFIER, 'x', 1, 1);
+        Token sut = new Token(TokenType.IDENTIFIER, 'x', 1, 1);
     }
 
     @Test
     public void checkEOFToken() {
         Token sut = Token.EOF_TOKEN;
 
-        Assert.assertEquals(Token.TokenType.EOF, sut.getType());
+        Assert.assertEquals(TokenType.EOF, sut.getType());
         Assert.assertEquals(0, sut.getNumberValue());
         Assert.assertEquals(0, sut.getRow());
         Assert.assertEquals(0, sut.getColumn());
@@ -110,7 +110,7 @@ public class TokenTest {
     @Test
     public void symbolTokenToString() {
         try {
-            Token sut = new Token(Token.TokenType.SYMBOL, '+', 1,1);
+            Token sut = new Token(TokenType.SYMBOL, '+', 1,1);
 
             Assert.assertEquals("SYMBOL + at 1:1", sut.toString());
         } catch (InvalidTokenTypeException e) {
@@ -122,7 +122,7 @@ public class TokenTest {
     @Test
     public void keywordTokenToString() {
         try {
-            Token sut = new Token(Token.TokenType.KEYWORD, SpecialCharacter.VAR.value, 1,1);
+            Token sut = new Token(TokenType.KEYWORD, SpecialCharacter.VAR.value, 1,1);
 
             Assert.assertEquals("KEYWORD VAR at 1:1", sut.toString());
         } catch (InvalidTokenTypeException e) {
@@ -134,7 +134,7 @@ public class TokenTest {
     @Test
     public void numeralTokenToString() {
         try {
-            Token sut = new Token(Token.TokenType.NUMERAL, -42, 1,1);
+            Token sut = new Token(TokenType.NUMERAL, -42, 1,1);
 
             Assert.assertEquals("NUMERAL -42 at 1:1", sut.toString());
         } catch (InvalidTokenTypeException e) {
@@ -146,7 +146,7 @@ public class TokenTest {
     @Test
     public void identifierTokenToString() {
         try {
-            Token sut = new Token(Token.TokenType.IDENTIFIER, "MAX", 1,1);
+            Token sut = new Token(TokenType.IDENTIFIER, "MAX", 1,1);
 
             Assert.assertEquals("IDENTIFIER MAX at 1:1", sut.toString());
         } catch (InvalidTokenTypeException e) {

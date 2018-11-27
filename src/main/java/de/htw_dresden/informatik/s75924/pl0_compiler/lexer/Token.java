@@ -1,9 +1,6 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.lexer;
 
 public class Token {
-    public enum TokenType {
-        KEYWORD, NUMERAL, SYMBOL, IDENTIFIER, EOF
-    }
 
     private TokenType type;
     private String stringValue = null;
