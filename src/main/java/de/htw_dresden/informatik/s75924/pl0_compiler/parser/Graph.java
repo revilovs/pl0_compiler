@@ -24,10 +24,10 @@ public enum Graph {
     FACTOR,
     CONDITION;
 
-    /**
-     * This is necessary because of the circular reference between the graphs
-     * e.g. EXPRESSION -> TERM -> FACTOR -> EXPRESSION
-     * Therefore the arcs must be assigned after declaration
+    /*
+      This is necessary because of the circular reference between the graphs
+      e.g. EXPRESSION -> TERM -> FACTOR -> EXPRESSION
+      Therefore the arcs must be assigned after declaration
      */
     static {
         PROGRAM.arcs = new Arc[] {
@@ -84,12 +84,12 @@ public enum Graph {
         };
         
         STATEMENT.arcs = new Arc[] {
-                /* 0 */ new Arc(ASSIGNMENT_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(CONDITIONAL_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
-                /* 2 */ new Arc(LOOP_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(COMPOUND_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(PROCEDURE_CALL, null, 7, Arc.NO_ALTERNATIVE),
-                /* 5 */ new Arc(INPUT_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
+                /* 0 */ new Arc(ASSIGNMENT_STATEMENT, null, 7, 1),
+                /* 1 */ new Arc(CONDITIONAL_STATEMENT, null, 7, 2),
+                /* 2 */ new Arc(LOOP_STATEMENT, null, 7, 3),
+                /* 3 */ new Arc(COMPOUND_STATEMENT, null, 7, 4),
+                /* 4 */ new Arc(PROCEDURE_CALL, null, 7, 5),
+                /* 5 */ new Arc(INPUT_STATEMENT, null, 7, 6),
                 /* 6 */ new Arc(OUTPUT_STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
                 /* 7 */ Arc.END_ARC
         };
