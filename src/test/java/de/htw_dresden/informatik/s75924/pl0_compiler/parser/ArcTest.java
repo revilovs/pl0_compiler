@@ -13,7 +13,7 @@ public class ArcTest {
         assertEquals(',',sut.getSymbolValue());
         assertNull(sut.getGraph());
         assertNull(sut.getTokenType());
-        assertNull(sut.getEvaluationFunction());
+        assertNull(sut.getSemanticRoutine());
         assertEquals(3, sut.getNext());
         assertEquals(7, sut.getAlternative());
     }
@@ -25,7 +25,7 @@ public class ArcTest {
         assertEquals(0,sut.getSymbolValue());
         assertEquals(Graph.EXPRESSION, sut.getGraph());
         assertNull(sut.getTokenType());
-        assertNull(sut.getEvaluationFunction());
+        assertNull(sut.getSemanticRoutine());
         assertEquals(3, sut.getNext());
         assertEquals(Arc.NO_ALTERNATIVE, sut.getAlternative());
     }
@@ -37,7 +37,7 @@ public class ArcTest {
         assertEquals(0,sut.getSymbolValue());
         assertNull(sut.getGraph());
         assertEquals(TokenType.NUMERAL, sut.getTokenType());
-        assertNull(sut.getEvaluationFunction());
+        assertNull(sut.getSemanticRoutine());
         assertEquals(1, sut.getNext());
         assertEquals(Arc.NO_ALTERNATIVE, sut.getAlternative());
     }
@@ -49,7 +49,7 @@ public class ArcTest {
         assertEquals(0,sut.getSymbolValue());
         assertNull(sut.getGraph());
         assertNull(sut.getTokenType());
-        assertNull(sut.getEvaluationFunction());
+        assertNull(sut.getSemanticRoutine());
         assertEquals(5, sut.getNext());
         assertEquals(Arc.NO_ALTERNATIVE, sut.getAlternative());
     }
@@ -61,7 +61,7 @@ public class ArcTest {
         assertEquals(0,sut.getSymbolValue());
         assertNull(sut.getGraph());
         assertNull(sut.getTokenType());
-        assertNull(sut.getEvaluationFunction());
+        assertNull(sut.getSemanticRoutine());
         assertEquals(Arc.NO_ALTERNATIVE, sut.getNext());
         assertEquals(Arc.NO_ALTERNATIVE, sut.getAlternative());
     }

@@ -11,7 +11,7 @@ public class Arc {
     private Graph graph = null;
     private TokenType tokenType = null;
 
-    private BooleanSupplier evaluationFunction = null;
+    private BooleanSupplier semanticRoutine = null;
 
     private int next;
     private int alternative;
@@ -21,14 +21,14 @@ public class Arc {
     /**
      * Constructs a Symbol bow for keywords or operators
      * @param symbolValue The keyword's or operator's symbol value
-     * @param evaluationFunction The arc's evaluation function
+     * @param semanticRoutine The arc's semantic routine
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(char symbolValue, BooleanSupplier evaluationFunction, int next, int alternative) {
+    public Arc(char symbolValue, BooleanSupplier semanticRoutine, int next, int alternative) {
         this.type = ArcType.SYMBOL;
         this.symbolValue = symbolValue;
-        this.evaluationFunction = evaluationFunction;
+        this.semanticRoutine = semanticRoutine;
         this.next = next;
         this.alternative = alternative;
     }
@@ -36,14 +36,14 @@ public class Arc {
     /**
      * Constructs a new Graph Arc
      * @param graph The arc's graph
-     * @param evaluationFunction The arc's evaluation function
+     * @param semanticRoutine The arc's semantic routine
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(Graph graph, BooleanSupplier evaluationFunction, int next, int alternative) {
+    public Arc(Graph graph, BooleanSupplier semanticRoutine, int next, int alternative) {
         this.type = ArcType.GRAPH;
         this.graph = graph;
-        this.evaluationFunction = evaluationFunction;
+        this.semanticRoutine = semanticRoutine;
         this.next = next;
         this.alternative = alternative;
     }
@@ -51,14 +51,14 @@ public class Arc {
     /**
      * Constructs a new Identifier or numeral arc
      * @param tokenType The Token type (identifier or numeral)
-     * @param evaluationFunction The arc's evaluation function
+     * @param semanticRoutine The arc's semantic routine
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(TokenType tokenType, BooleanSupplier evaluationFunction, int next, int alternative) {
+    public Arc(TokenType tokenType, BooleanSupplier semanticRoutine, int next, int alternative) {
         this.type = ArcType.IDENTIFIER_OR_NUMERAL;
         this.tokenType = tokenType;
-        this.evaluationFunction = evaluationFunction;
+        this.semanticRoutine = semanticRoutine;
         this.next = next;
         this.alternative = alternative;
     }
@@ -100,8 +100,8 @@ public class Arc {
         return tokenType;
     }
 
-    public BooleanSupplier getEvaluationFunction() {
-        return evaluationFunction;
+    public BooleanSupplier getSemanticRoutine() {
+        return semanticRoutine;
     }
 
     public int getNext() {
