@@ -11,4 +11,16 @@ public class GraphTest {
             assertNotNull(g.getArcs());
         }
     }
+
+    @Test
+    public void noInvalidIndices() {
+        for (Graph g : Graph.values()) {
+            int len = g.getArcs().length;
+
+            for (Arc arc: g.getArcs()) {
+                assertTrue(arc.getNext() < len);
+                assertTrue(arc.getAlternative() < len);
+            }
+        }
+    }
 }
