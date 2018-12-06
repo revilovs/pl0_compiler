@@ -37,13 +37,17 @@ public enum Graph {
         };
         
         BLOCK.arcs = new Arc[] {
-                /* 0 */ new Arc(CONST_DECLARATION_LIST, null, 2, 1),
-                /* 1 */ new Arc(2),
-                /* 2 */ new Arc(VAR_DECLARATION_LIST, null, 4, 3),
-                /* 3 */ new Arc(4),
-                /* 4 */ new Arc(PROCEDURE_DECLARATION, null, 4, 5),
-                /* 5 */ new Arc(STATEMENT, null, 6, Arc.NO_ALTERNATIVE),
-                /* 6 */ Arc.END_ARC
+                /*  0 */ new Arc(Graph.CONST_DECLARATION_LIST, null, 1, 2),
+                /*  1 */ new Arc(3),
+                /*  2 */ new Arc(3),
+                /*  3 */ new Arc(Graph.VAR_DECLARATION_LIST, null, 4, 5),
+                /*  4 */ new Arc(6),
+                /*  5 */ new Arc(6),
+                /*  6 */ new Arc(Graph.PROCEDURE_DECLARATION, null, 7, 8),
+                /*  7 */ new Arc(6),
+                /*  8 */ new Arc(9),
+                /*  9 */ new Arc(Graph.STATEMENT, null, 10, Arc.NO_ALTERNATIVE),
+                /* 10 */ Arc.END_ARC
         };
         
         CONST_DECLARATION_LIST.arcs = new Arc[] {
