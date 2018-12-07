@@ -1,11 +1,9 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
-import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
-import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
-import de.htw_dresden.informatik.s75924.pl0_compiler.parser.Graph;
 import de.htw_dresden.informatik.s75924.pl0_compiler.parser.Parser;
 import de.htw_dresden.informatik.s75924.pl0_compiler.parser.UnexpectedTokenException;
+import de.htw_dresden.informatik.s75924.pl0_compiler.parser.SemanticRoutineException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -25,6 +23,9 @@ public class PL0Compiler {
         } catch (UnexpectedTokenException e) {
             System.err.println(e.toString());
             System.exit(2);
+        } catch (SemanticRoutineException e) {
+            e.printStackTrace();
+            System.exit(3);
         }
     }
 }

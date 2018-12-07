@@ -1,12 +1,12 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
-import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.*;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 public class ParserTest {
     @Test
@@ -19,7 +19,7 @@ public class ParserTest {
             parser.parse();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (UnexpectedTokenException e) {
+        } catch (UnexpectedTokenException | SemanticRoutineException e) {
             fail();
         }
     }
@@ -33,7 +33,7 @@ public class ParserTest {
 
             parser.parse();
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException | SemanticRoutineException e) {
             e.printStackTrace();
             fail();
         }

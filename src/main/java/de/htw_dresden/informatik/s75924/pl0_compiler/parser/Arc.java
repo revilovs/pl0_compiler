@@ -2,8 +2,6 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 
-import java.util.function.BooleanSupplier;
-
 public class Arc {
     private ArcType type;
 
@@ -11,7 +9,7 @@ public class Arc {
     private Graph graph = null;
     private TokenType tokenType = null;
 
-    private BooleanSupplier semanticRoutine = null;
+    private SemanticRoutine semanticRoutine = null;
 
     private int next;
     private int alternative;
@@ -25,7 +23,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(char symbolValue, BooleanSupplier semanticRoutine, int next, int alternative) {
+    public Arc(char symbolValue, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.SYMBOL;
         this.symbolValue = symbolValue;
         this.semanticRoutine = semanticRoutine;
@@ -40,7 +38,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(Graph graph, BooleanSupplier semanticRoutine, int next, int alternative) {
+    public Arc(Graph graph, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.GRAPH;
         this.graph = graph;
         this.semanticRoutine = semanticRoutine;
@@ -55,7 +53,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(TokenType tokenType, BooleanSupplier semanticRoutine, int next, int alternative) {
+    public Arc(TokenType tokenType, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.IDENTIFIER_OR_NUMERAL;
         this.tokenType = tokenType;
         this.semanticRoutine = semanticRoutine;
@@ -100,7 +98,7 @@ public class Arc {
         return tokenType;
     }
 
-    public BooleanSupplier getSemanticRoutine() {
+    public SemanticRoutine getSemanticRoutine() {
         return semanticRoutine;
     }
 

@@ -10,11 +10,11 @@ public class Parser {
         this.lexer = lexer;
     }
 
-    public void parse() throws UnexpectedTokenException {
+    public void parse() throws UnexpectedTokenException, SemanticRoutineException {
         parse(Graph.PROGRAM);
     }
 
-    private void parse(Graph graph) throws UnexpectedTokenException {
+    private void parse(Graph graph) throws UnexpectedTokenException, SemanticRoutineException {
         boolean success = false;
         Arc currentArc = graph.getArcs()[0];
 
@@ -45,7 +45,7 @@ public class Parser {
             }
 
             if (success && currentArc.getSemanticRoutine() != null){
-                success = currentArc.getSemanticRoutine().getAsBoolean();
+                currentArc.getSemanticRoutine().apply(this);
             }
 
             if (!success){
