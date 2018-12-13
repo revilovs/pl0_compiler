@@ -69,6 +69,11 @@ public class Lexer {
     public void lex(){
         current = next;
 
+        if(eof) {
+            next = Token.EOF_TOKEN;
+            return;
+        }
+
         boolean end = false;
 
         tokenRow = readRow;
@@ -158,9 +163,6 @@ public class Lexer {
                     next = new Token(TokenType.SYMBOL, getOperatorChar(currentString), tokenRow, tokenColumn);
                     break;
             }
-
-            if (eof)
-                next = Token.EOF_TOKEN;
         }
         catch (InvalidTokenTypeException e){
             e.printStackTrace();

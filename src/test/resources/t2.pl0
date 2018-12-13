@@ -9,5 +9,3 @@ begin
   call p1;
   !Max
 end.
-
-
