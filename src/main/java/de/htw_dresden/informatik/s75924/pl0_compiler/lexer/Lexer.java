@@ -2,44 +2,105 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.lexer;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Lexer {
+    /**
+     * Enum containing the states of the Lexer's FSM.
+     * Z_? states are normal states, E?? are end/final states.
+     * EIK can be an identifier or a keyword, EId, must be an Identifier
+     */
     private enum State {
-        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, ESy, EDe, ENu, EAs, ECo, ELE, ELT, EGE, EGT
+        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, Z_9, ESy, EIK, EId, ENu, EAs, ECo, ELE, ELT, EGE, EGT
     }
 
     private enum CharacterType {
-        SYMBOL, DIGIT, ALPHA, COLON, EQUALS, LESS, GREATER, OTHER
+        SYMBOL, DIGIT, ALPHA, COLON, EQUALS, LESS, GREATER, OTHER, ALPHA_KEY_START
     }
 
     private enum Action {
         WRE, W_R, END, REA
     }
 
+    private static final HashMap<Character, CharacterType> characterTypeMap = new HashMap<>();
+
+    static {
+        characterTypeMap.put(':', CharacterType.COLON);
+        characterTypeMap.put('=', CharacterType.EQUALS);
+        characterTypeMap.put('<', CharacterType.LESS);
+        characterTypeMap.put('>', CharacterType.GREATER);
+
+        characterTypeMap.put('+', CharacterType.SYMBOL);
+        characterTypeMap.put('-', CharacterType.SYMBOL);
+        characterTypeMap.put('*', CharacterType.SYMBOL);
+        characterTypeMap.put('/', CharacterType.SYMBOL);
+        characterTypeMap.put(',', CharacterType.SYMBOL);
+        characterTypeMap.put('.', CharacterType.SYMBOL);
+        characterTypeMap.put(';', CharacterType.SYMBOL);
+        characterTypeMap.put('(', CharacterType.SYMBOL);
+        characterTypeMap.put(')', CharacterType.SYMBOL);
+        characterTypeMap.put('?', CharacterType.SYMBOL);
+        characterTypeMap.put('!', CharacterType.SYMBOL);
+        characterTypeMap.put('#', CharacterType.SYMBOL);
+
+        for (char c = '0'; c <= '9'; c++)
+            characterTypeMap.put(c, CharacterType.DIGIT);
+
+        for (char c = 'a'; c <= 'z'; c++)
+            characterTypeMap.put(c, CharacterType.ALPHA);
+
+        for (char c = 'A'; c <= 'Z'; c++)
+            characterTypeMap.put(c, CharacterType.ALPHA);
+
+        characterTypeMap.put('b', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('c', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('d', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('e', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('i', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('o', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('p', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('t', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('v', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('w', CharacterType.ALPHA_KEY_START);
+
+        characterTypeMap.put('B', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('C', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('D', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('E', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('I', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('O', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('P', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('T', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('V', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('W', CharacterType.ALPHA_KEY_START);
+    }
+
     private static final State[][] stateTable = {
-            /*      SYMBOL      DIGIT      ALPHA      COLON      EQUALS     LESS       GREATER    OTHER   */
-            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.ESy, State.Z_4, State.Z_5, State.Z_0 },
-            /*Z_1*/ { State.EDe, State.Z_1, State.Z_1, State.EDe, State.EDe, State.EDe, State.EDe, State.EDe },
-            /*Z_2*/ { State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu },
-            /*Z_3*/ { State.ECo, State.ECo, State.ECo, State.ECo, State.Z_6, State.ECo, State.ECo, State.ECo },
-            /*Z_4*/ { State.ELT, State.ELT, State.ELT, State.ELT, State.Z_7, State.ELT, State.ELT, State.ELT },
-            /*Z_5*/ { State.EGT, State.EGT, State.EGT, State.EGT, State.Z_8, State.EGT, State.EGT, State.EGT },
-            /*Z_6*/ { State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs },
-            /*Z_7*/ { State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE },
-            /*Z_8*/ { State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE }
+            /*       SYMBOL      DIGIT      ALPHA      COLON      EQUALS     LESS       GREATER    OTHER      ALPHA_KEY_START */
+            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.ESy, State.Z_4, State.Z_5, State.Z_0, State.Z_9 },
+            /*Z_1*/ { State.EId, State.Z_1, State.Z_1, State.EId, State.EId, State.EId, State.EId, State.EId, State.Z_1 },
+            /*Z_2*/ { State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu },
+            /*Z_3*/ { State.ECo, State.ECo, State.ECo, State.ECo, State.Z_6, State.ECo, State.ECo, State.ECo, State.ECo },
+            /*Z_4*/ { State.ELT, State.ELT, State.ELT, State.ELT, State.Z_7, State.ELT, State.ELT, State.ELT, State.ELT },
+            /*Z_5*/ { State.EGT, State.EGT, State.EGT, State.EGT, State.Z_8, State.EGT, State.EGT, State.EGT, State.EGT },
+            /*Z_6*/ { State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs },
+            /*Z_7*/ { State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE },
+            /*Z_8*/ { State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE },
+            /*Z_9*/ { State.EIK, State.Z_1, State.Z_9, State.EIK, State.EIK, State.EIK, State.EIK, State.EIK, State.Z_9 }
     };
 
     private static final Action[][] actionTable = {
-            /*       SYMBOL       DIGIT       ALPHA       COLON       EQUALS      LESS        GREATER     OTHER   */
-            /*Z_0*/ { Action.WRE, Action.W_R, Action.W_R, Action.W_R, Action.WRE, Action.W_R, Action.W_R, Action.REA },
-            /*Z_1*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA },
-            /*Z_2*/ { Action.END, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA },
-            /*Z_3*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA },
-            /*Z_4*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA },
-            /*Z_5*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA },
-            /*Z_6*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA },
-            /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA },
-            /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA }
+            /*       SYMBOL       DIGIT       ALPHA       COLON       EQUALS      LESS        GREATER     OTHER       ALPHA_KEY_START */
+            /*Z_0*/ { Action.WRE, Action.W_R, Action.W_R, Action.W_R, Action.WRE, Action.W_R, Action.W_R, Action.REA, Action.W_R },
+            /*Z_1*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R },
+            /*Z_2*/ { Action.END, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_3*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_4*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_5*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_6*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END },
+            /*Z_9*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R }
     };
 
     private FileReader reader;
@@ -106,7 +167,7 @@ public class Lexer {
         end();
     }
 
-    public Token getCurrentToken(){
+    Token getCurrentToken(){
         return current;
     }
 
@@ -144,11 +205,13 @@ public class Lexer {
     private void end(){
         try {
             switch (currentState) {
-                case EDe:
-                    if (isKeyword(currentString))
+                case EIK:
+                    if (isKeyword(currentString)) {
                         next = new Token(TokenType.KEYWORD, SpecialCharacter.stringCharacterMap.get(currentString), tokenRow, tokenColumn);
-                    else
-                        next = new Token(TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
+                        break;
+                    }
+                case EId:
+                    next = new Token(TokenType.IDENTIFIER, currentString, tokenRow, tokenColumn);
                     break;
                 case ENu:
                     next = new Token(TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
@@ -172,31 +235,8 @@ public class Lexer {
     }
 
     private static CharacterType getCharacterType(char character){
-        switch (character){
-            case ':': return CharacterType.COLON;
-            case '=': return CharacterType.EQUALS;
-            case '<': return CharacterType.LESS;
-            case '>': return CharacterType.GREATER;
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case ',':
-            case '.':
-            case ';':
-            case '(':
-            case ')':
-            case '?':
-            case '!':
-            case '#':
-                return CharacterType.SYMBOL;
-        }
-
-        if(Character.isAlphabetic(character))
-            return CharacterType.ALPHA;
-
-        if(Character.isDigit(character))
-            return CharacterType.DIGIT;
+        if (characterTypeMap.containsKey(character))
+            return characterTypeMap.get(character);
 
         return CharacterType.OTHER;
     }
