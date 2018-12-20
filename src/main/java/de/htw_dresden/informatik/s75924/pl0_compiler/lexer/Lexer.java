@@ -18,7 +18,7 @@ public class Lexer {
 
     private static final State[][] stateTable = {
             /*      SYMBOL      DIGIT      ALPHA      COLON      EQUALS     LESS       GREATER    OTHER   */
-            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.Z_0, State.Z_4, State.Z_5, State.Z_0 },
+            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.ESy, State.Z_4, State.Z_5, State.Z_0 },
             /*Z_1*/ { State.EDe, State.Z_1, State.Z_1, State.EDe, State.EDe, State.EDe, State.EDe, State.EDe },
             /*Z_2*/ { State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu },
             /*Z_3*/ { State.ECo, State.ECo, State.ECo, State.ECo, State.Z_6, State.ECo, State.ECo, State.ECo },

@@ -18,7 +18,7 @@ public class LexerTest {
             ArrayList<Token> expectedTokens = new ArrayList<>();
 
             //var a,b,Max;
-            expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 0));
+            expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 1));
             expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 1, 5));
             expectedTokens.add(new Token(TokenType.SYMBOL, ',', 1, 6));
             expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 1, 7));
@@ -92,6 +92,45 @@ public class LexerTest {
 
         }
         catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void lexT7Correctly() {
+        try {
+            Lexer sut = new Lexer(new FileReader(getClass().getResource("/t7.pl0").getFile()));
+
+            ArrayList<Token> expectedTokens = new ArrayList<>();
+
+            //const a=5, b=7;
+            expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.CONST.value, 1, 0));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 1, 6));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 7));
+            expectedTokens.add(new Token(TokenType.NUMERAL, 5, 1, 8));
+            expectedTokens.add(new Token(TokenType.SYMBOL, ',', 1, 9));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 1, 11));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 12));
+            expectedTokens.add(new Token(TokenType.NUMERAL, 7, 1, 13));
+            expectedTokens.add(new Token(TokenType.SYMBOL, ';', 1, 14));
+
+            //!a.
+            expectedTokens.add(new Token(TokenType.SYMBOL, '!', 2, 1));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 2,2));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '.', 2,3));
+
+            expectedTokens.add(Token.EOF_TOKEN);
+
+
+
+            for (Token expectedToken : expectedTokens) {
+                sut.lex();
+                Assert.assertEquals(expectedToken, sut.getCurrentToken());
+            }
+
+        }
+        catch (Exception e){
             e.printStackTrace();
             fail();
         }
