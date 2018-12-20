@@ -2,19 +2,21 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
+import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.NameList;
 
 public class Parser {
     private Lexer lexer;
+    private NameList nameList = new NameList();
 
     public Parser(Lexer lexer) {
         this.lexer = lexer;
     }
 
-    public void parse() throws UnexpectedTokenException, SemanticRoutineException {
+    public void parse() throws SemanticRoutineException {
         parse(Graph.PROGRAM);
     }
 
-    private void parse(Graph graph) throws UnexpectedTokenException, SemanticRoutineException {
+    private void parse(Graph graph) throws SemanticRoutineException {
         boolean success = false;
         Arc currentArc = graph.getArcs()[0];
 
@@ -68,5 +70,13 @@ public class Parser {
         //EOF encountered
         if(!currentArc.getArcType().equals(ArcType.END))
             throw new UnexpectedTokenException(nextToken);
+    }
+
+    protected Lexer getLexer() {
+        return lexer;
+    }
+
+    protected NameList getNameList() {
+        return nameList;
     }
 }

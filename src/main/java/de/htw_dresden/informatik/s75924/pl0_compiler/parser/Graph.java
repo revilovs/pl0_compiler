@@ -2,6 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.SpecialCharacter;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
+import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.NameList;
 
 public enum Graph {
     PROGRAM,
@@ -68,22 +69,70 @@ public enum Graph {
         
         PROCEDURE_DECLARATION.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.PROCEDURE.value, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(TokenType.IDENTIFIER, null, 2, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(TokenType.IDENTIFIER,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException {
+                        NameList nameList = parser.getNameList();
+                        String procedureName = parser.getLexer().getNextToken().getStringValue();
+
+                        nameList.addProcedure(procedureName);
+                    }
+                },
+                2, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(';', null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(BLOCK, null, 4, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(';', null, 5, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(';',
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        //TODO: Code generation
+                        parser.getNameList().endProcedure();
+                    }
+                },
+                5, Arc.NO_ALTERNATIVE),
                 /* 5 */ Arc.END_ARC
         };
         
         CONST_DECLARATION.arcs = new Arc[] {
-                /* 0 */ new Arc(TokenType.IDENTIFIER, null, 1, Arc.NO_ALTERNATIVE),
+                /* 0 */ new Arc(TokenType.IDENTIFIER,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException {
+                        NameList nameList = parser.getNameList();
+                        String identifier = parser.getLexer().getNextToken().getStringValue();
+
+                        nameList.setConstantName(identifier);
+                    }
+                },
+                1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc('=', null, 2, Arc.NO_ALTERNATIVE),
-                /* 2 */ new Arc(TokenType.NUMERAL, null, 3, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(TokenType.NUMERAL,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException {
+                        NameList nameList = parser.getNameList();
+                        long value = parser.getLexer().getNextToken().getNumberValue();
+
+                        nameList.addConstant(value);
+                    }
+                },
+                3, Arc.NO_ALTERNATIVE),
                 /* 3 */ Arc.END_ARC
         };
         
         VAR_DECLARATION.arcs = new Arc[] {
-                /* 0 */ new Arc(TokenType.IDENTIFIER, null, 1, Arc.NO_ALTERNATIVE),
+                /* 0 */ new Arc(TokenType.IDENTIFIER,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException {
+                        NameList nameList = parser.getNameList();
+                        String identifier = parser.getLexer().getNextToken().getStringValue();
+
+                        nameList.addVariable(identifier);
+                    }
+                },
+                1, Arc.NO_ALTERNATIVE),
                 /* 1 */ Arc.END_ARC
         };
         
