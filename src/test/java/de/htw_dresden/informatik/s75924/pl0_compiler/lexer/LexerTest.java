@@ -40,10 +40,10 @@ public class LexerTest {
             expectedTokens.add(new Token(TokenType.SYMBOL, SpecialCharacter.GREATER_OR_EQUAL.value, 4, 7));
             expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 4, 9));
             expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.THEN.value, 4, 11));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "MAX", 4, 15));
-            expectedTokens.add(new Token(TokenType.SYMBOL, SpecialCharacter.ASSIGN.value, 4, 18));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 4, 20));
-            expectedTokens.add(new Token(TokenType.SYMBOL, ';', 4, 21));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "MAX", 4, 16));
+            expectedTokens.add(new Token(TokenType.SYMBOL, SpecialCharacter.ASSIGN.value, 4, 19));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 4, 21));
+            expectedTokens.add(new Token(TokenType.SYMBOL, ';', 4, 22));
 
             //   if a< b then Max:=b
             expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.IF.value, 5, 3));
@@ -51,9 +51,9 @@ public class LexerTest {
             expectedTokens.add(new Token(TokenType.SYMBOL, '<', 5, 7));
             expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 5, 9));
             expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.THEN.value, 5, 11));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "MAX", 5, 15));
-            expectedTokens.add(new Token(TokenType.SYMBOL, SpecialCharacter.ASSIGN.value, 5, 18));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 5, 20));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "MAX", 5, 16));
+            expectedTokens.add(new Token(TokenType.SYMBOL, SpecialCharacter.ASSIGN.value, 5, 19));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 5, 21));
 
             // end;
             expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.END.value, 6, 1));
@@ -105,15 +105,15 @@ public class LexerTest {
             ArrayList<Token> expectedTokens = new ArrayList<>();
 
             //const a=5, b=7;
-            expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.CONST.value, 1, 0));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 1, 6));
-            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 7));
-            expectedTokens.add(new Token(TokenType.NUMERAL, 5, 1, 8));
-            expectedTokens.add(new Token(TokenType.SYMBOL, ',', 1, 9));
-            expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 1, 11));
-            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 12));
-            expectedTokens.add(new Token(TokenType.NUMERAL, 7, 1, 13));
-            expectedTokens.add(new Token(TokenType.SYMBOL, ';', 1, 14));
+            expectedTokens.add(new Token(TokenType.KEYWORD, SpecialCharacter.CONST.value, 1, 1));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "A", 1, 7));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 8));
+            expectedTokens.add(new Token(TokenType.NUMERAL, 5, 1, 9));
+            expectedTokens.add(new Token(TokenType.SYMBOL, ',', 1, 10));
+            expectedTokens.add(new Token(TokenType.IDENTIFIER, "B", 1, 12));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '=', 1, 13));
+            expectedTokens.add(new Token(TokenType.NUMERAL, 7, 1, 14));
+            expectedTokens.add(new Token(TokenType.SYMBOL, ';', 1, 15));
 
             //!a.
             expectedTokens.add(new Token(TokenType.SYMBOL, '!', 2, 1));

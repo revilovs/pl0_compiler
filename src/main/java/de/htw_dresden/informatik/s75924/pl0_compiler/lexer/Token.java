@@ -1,5 +1,7 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.lexer;
 
+import java.util.Objects;
+
 public class Token {
 
     private TokenType type;
@@ -103,8 +105,10 @@ public class Token {
         Token otherToken = (Token) other;
 
         return type == otherToken.type
-                && (stringValue == null ? otherToken.stringValue == null : stringValue.equals(otherToken.stringValue))
+                && (Objects.equals(stringValue, otherToken.stringValue))
                 && charValue == otherToken.charValue
-                && numberValue == ((Token) other).numberValue;
+                && numberValue == ((Token) other).numberValue
+                && row == otherToken.row
+                && column == otherToken.column ;
     }
 }

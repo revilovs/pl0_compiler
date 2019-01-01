@@ -137,9 +137,6 @@ public class Lexer {
 
         boolean end = false;
 
-        tokenRow = readRow;
-        tokenColumn = readColumn;
-
         currentState = State.Z_0;
         currentString = "";
 
@@ -198,6 +195,11 @@ public class Lexer {
 
     private void write(){
         char upper = Character.isAlphabetic(currentChar) ? Character.toUpperCase(currentChar) : currentChar;
+
+        if(currentString.equals("")){
+            tokenRow = readRow;
+            tokenColumn = readColumn;
+        }
 
         currentString = currentString + upper;
     }
