@@ -47,7 +47,15 @@ public enum Graph {
                 /*  6 */ new Arc(Graph.PROCEDURE_DECLARATION, null, 7, 8),
                 /*  7 */ new Arc(6),
                 /*  8 */ new Arc(9),
-                /*  9 */ new Arc(Graph.STATEMENT, null, 10, Arc.NO_ALTERNATIVE),
+                /*  9 */ new Arc(Graph.STATEMENT,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        //TODO: Code generation
+                        parser.getNameList().endProcedure();
+                    }
+                },
+                10, Arc.NO_ALTERNATIVE),
                 /* 10 */ Arc.END_ARC
         };
         
@@ -82,15 +90,7 @@ public enum Graph {
                 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(';', null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(BLOCK, null, 4, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(';',
-                new SemanticRoutine() {
-                    @Override
-                    public void apply(Parser parser) {
-                        //TODO: Code generation
-                        parser.getNameList().endProcedure();
-                    }
-                },
-                5, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(';', null, 5, Arc.NO_ALTERNATIVE),
                 /* 5 */ Arc.END_ARC
         };
         
