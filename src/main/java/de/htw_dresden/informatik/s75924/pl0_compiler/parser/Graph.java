@@ -1,8 +1,11 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
+import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.SpecialCharacter;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
-import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.NameList;
+import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.*;
+
+import java.io.IOException;
 
 public enum Graph {
     PROGRAM,
@@ -33,7 +36,19 @@ public enum Graph {
     static {
         PROGRAM.arcs = new Arc[] {
                 /* 0 */ new Arc(BLOCK, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc('.', null, 2, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc('.',
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+                        NameList nameList = parser.getNameList();
+
+                        codeGenerator.writeConstantBlock(nameList.getConstantBlock());
+                        codeGenerator.writeNumberOfProcedures(nameList.getNumberOfProcedures());
+                        codeGenerator.close();
+                    }
+                },
+                2, Arc.NO_ALTERNATIVE),
                 /* 2 */ Arc.END_ARC
         };
         
@@ -46,12 +61,25 @@ public enum Graph {
                 /*  5 */ new Arc(6),
                 /*  6 */ new Arc(Graph.PROCEDURE_DECLARATION, null, 7, 8),
                 /*  7 */ new Arc(6),
-                /*  8 */ new Arc(9),
+                /*  8 */ new Arc(9,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws IOException {
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+                        NameList nameList = parser.getNameList();
+
+                        int procedureIndex = nameList.getCurrentProcedureIndex();
+                        int variableLength = nameList.getVariableLength();
+
+                        codeGenerator.generateProcedureEntry(procedureIndex, variableLength);
+                    }
+                }),
                 /*  9 */ new Arc(Graph.STATEMENT,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) {
-                        //TODO: Code generation
+                    public void apply(Parser parser) throws IOException {
+                        parser.getCodeGenerator().generateProcedureReturn();
+
                         parser.getNameList().endProcedure();
                     }
                 },
@@ -192,7 +220,13 @@ public enum Graph {
 
         OUTPUT_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc('!', null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(EXPRESSION, null, 2, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(EXPRESSION,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                        parser.getCodeGenerator().generatePutValue();
+                    }
+                }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ Arc.END_ARC
         };
 
@@ -219,11 +253,59 @@ public enum Graph {
         };
 
         FACTOR.arcs = new Arc[] {
-                /* 0 */ new Arc(TokenType.NUMERAL, null, 5, 1),
+                /* 0 */ new Arc(TokenType.NUMERAL,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                        NameList nameList = parser.getNameList();
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+                        long constantValue = parser.getLexer().getNextToken().getNumberValue();
+
+                        nameList.addConstant(constantValue);
+                        int constantIndex = nameList.getIndexOfConstant(constantValue);
+
+                        codeGenerator.generatePushConstant(constantIndex);
+
+                    }
+                }, 5, 1),
                 /* 1 */ new Arc('(', null, 2, 4),
                 /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(')', null, 5, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(TokenType.IDENTIFIER, null, 5, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(TokenType.IDENTIFIER,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                        NameList nameList = parser.getNameList();
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+                        String identifier = parser.getLexer().getNextToken().getStringValue();
+
+                        NameListEntry entry = nameList.findIdentifier(identifier);
+                        if (entry != null){
+                            if (entry instanceof VariableEntry){
+                                VariableEntry variableEntry = (VariableEntry) entry;
+
+                                boolean isLocal = nameList.entryIsLocal(variableEntry);
+                                boolean isMain = nameList.entryIsInMain(variableEntry);
+                                int displacement = variableEntry.getRelativeAddress();
+                                int procedureIndex = variableEntry.getProcedureIndex();
+
+                                codeGenerator.generatePushVariableValue(displacement, procedureIndex, isLocal, isMain);
+                            }
+
+                            else if (entry instanceof ConstantEntry){
+                                ConstantEntry constantEntry = (ConstantEntry) entry;
+
+                                int constantIndex = constantEntry.getIndex();
+
+                                codeGenerator.generatePushConstant(constantIndex);
+                            }
+                            else
+                                throw new InvalidIdentifierException();
+                        }
+                        else
+                            throw new InvalidIdentifierException();
+                    }
+                }, 5, Arc.NO_ALTERNATIVE),
                 /* 5 */ Arc.END_ARC
         };
 

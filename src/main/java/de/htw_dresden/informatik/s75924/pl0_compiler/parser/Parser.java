@@ -1,22 +1,27 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
+import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.NameList;
 
+import java.io.IOException;
+
 public class Parser {
     private Lexer lexer;
     private NameList nameList = new NameList();
+    private CodeGenerator codeGenerator;
 
-    public Parser(Lexer lexer) {
+    public Parser(Lexer lexer, CodeGenerator codeGenerator) {
         this.lexer = lexer;
+        this.codeGenerator = codeGenerator;
     }
 
-    public void parse() throws SemanticRoutineException {
+    public void parse() throws SemanticRoutineException, IOException {
         parse(Graph.PROGRAM);
     }
 
-    private void parse(Graph graph) throws SemanticRoutineException {
+    private void parse(Graph graph) throws SemanticRoutineException, IOException {
         boolean success = false;
         Arc currentArc = graph.getArcs()[0];
 
@@ -78,5 +83,9 @@ public class Parser {
 
     protected NameList getNameList() {
         return nameList;
+    }
+
+    protected CodeGenerator getCodeGenerator() {
+        return codeGenerator;
     }
 }

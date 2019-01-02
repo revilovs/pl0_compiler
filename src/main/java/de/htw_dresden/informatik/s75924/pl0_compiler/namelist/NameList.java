@@ -68,18 +68,54 @@ public class NameList {
         return currentProcedure.getIdentifiers().stream().anyMatch((entry -> entry.getName().equals(identifier)));
     }
 
-    public ConstantEntry findConstant(long value){
-        throw new NotImplementedException();
-    }
-
-    public NameListEntry findIdentifier(String name){
-        throw new NotImplementedException();
-    }
-
     public void setConstantName(String name) throws InvalidIdentifierException {
         if (findIdentifierLocal(name))
             throw new InvalidIdentifierException();
 
         nextConstantName = name;
+    }
+
+    public long[] getConstantBlock(){
+        return constants.stream().mapToLong(value -> value).toArray();
+    }
+
+    public int getNumberOfProcedures() {
+        return procedures.size();
+    }
+
+    public int getCurrentProcedureIndex(){
+        return currentProcedure.getProcedureIndex();
+    }
+
+    public int getVariableLength(){
+        return currentProcedure.getVariableLength();
+    }
+
+    public NameListEntry findIdentifier(String name){
+        for (ProcedureEntry searchProcedure = currentProcedure;
+             searchProcedure != null;
+             searchProcedure = searchProcedure.getParent()){
+
+            NameListEntry entry = searchProcedure.getIdentifiers().stream()
+                    .filter(nameListEntry -> nameListEntry.getName().equals(name)).findFirst().orElse(null);
+
+            if (entry != null)
+                return entry;
+
+        }
+
+        return null;
+    }
+
+    public boolean entryIsLocal(NameListEntry entry){
+        return entry.getProcedureIndex() == procedures.indexOf(currentProcedure);
+    }
+
+    public boolean entryIsInMain(NameListEntry entry){
+        return entry.getProcedureIndex() == procedures.indexOf(mainProcedure);
+    }
+
+    public int getIndexOfConstant(long constantValue){
+        return constants.indexOf(constantValue);
     }
 }

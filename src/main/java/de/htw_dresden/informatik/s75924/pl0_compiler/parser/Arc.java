@@ -62,13 +62,25 @@ public class Arc {
     }
 
     /**
-     * Constructs a NIL Arc
+     * Constructs a NIL Arc without a semantic routine
      * @param next the index of the next arc
      */
     public Arc(int next) {
         this.type = ArcType.NIL;
         this.alternative = NO_ALTERNATIVE;
         this.next = next;
+    }
+
+    /**
+     * Constructs a NIL Arc with a semantic routine
+     * @param next the index of the next arc
+     * @param semanticRoutine The arc's semantic routine
+     */
+    public Arc(int next, SemanticRoutine semanticRoutine) {
+        this.type = ArcType.NIL;
+        this.alternative = NO_ALTERNATIVE;
+        this.next = next;
+        this.semanticRoutine = semanticRoutine;
     }
 
     /**

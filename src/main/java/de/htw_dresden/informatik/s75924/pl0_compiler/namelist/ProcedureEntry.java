@@ -25,12 +25,16 @@ class ProcedureEntry implements NameListEntry {
 
     @Override
     public int getProcedureIndex() {
-        return 0;
+        return procedureIndex;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    int getVariableLength(){
+        return variableRelativeAddressCounter;
     }
 
     void addConstantEntry(ConstantEntry entry){

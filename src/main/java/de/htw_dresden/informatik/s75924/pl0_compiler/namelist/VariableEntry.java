@@ -5,7 +5,7 @@ public class VariableEntry implements NameListEntry {
     private int procedureIndex;
     private int relativeAddress;
 
-    public VariableEntry(String name, int procedureIndex, int relativeAddress) {
+    VariableEntry(String name, int procedureIndex, int relativeAddress) {
         this.name = name;
         this.procedureIndex = procedureIndex;
         this.relativeAddress = relativeAddress;

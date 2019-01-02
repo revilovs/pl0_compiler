@@ -6,7 +6,7 @@ public class ConstantEntry implements NameListEntry {
     private int index;
     private String name;
 
-    public ConstantEntry(int procedureIndex, long value, int index, String name) {
+    ConstantEntry(int procedureIndex, long value, int index, String name) {
         this.procedureIndex = procedureIndex;
         this.value = value;
         this.index = index;

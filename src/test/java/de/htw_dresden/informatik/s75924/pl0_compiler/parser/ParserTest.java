@@ -1,19 +1,23 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
+import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.InvalidIdentifierException;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static org.junit.Assert.fail;
 
 public class ParserTest {
-    private void parseFile(String name) throws FileNotFoundException, SemanticRoutineException {
+    private void parseFile(String name) throws IOException, SemanticRoutineException {
         Lexer lexer = new Lexer(new FileReader(getClass().getResource(name).getFile()));
 
-        Parser parser = new Parser(lexer);
+        CodeGenerator generator = new CodeGenerator("/dev/null");
+
+        Parser parser = new Parser(lexer, generator);
 
         parser.parse();
     }
@@ -21,7 +25,7 @@ public class ParserTest {
     private void parseFileWithoutErrors(String file){
         try {
             parseFile(file);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (SemanticRoutineException e) {
             fail();
@@ -54,7 +58,7 @@ public class ParserTest {
         try {
             parseFile("/t2invalid.pl0");
         }
-        catch (InvalidIdentifierException | FileNotFoundException e) {
+        catch (InvalidIdentifierException | IOException e) {
             e.printStackTrace();
             fail();
         }
@@ -65,7 +69,7 @@ public class ParserTest {
         try {
             parseFile("/fakultaet-invalid_var.pl0");
         }
-        catch (FileNotFoundException |  UnexpectedTokenException e) {
+        catch (UnexpectedTokenException | IOException e) {
             e.printStackTrace();
             fail();
         }
@@ -77,7 +81,7 @@ public class ParserTest {
         try {
             parseFile("/t3-invalid_proc.pl0");
         }
-        catch (FileNotFoundException |  UnexpectedTokenException e) {
+        catch (UnexpectedTokenException | IOException e) {
             e.printStackTrace();
             fail();
         }
@@ -89,7 +93,7 @@ public class ParserTest {
         try {
             parseFile("/t7-invalid_const.pl0");
         }
-        catch (FileNotFoundException |  UnexpectedTokenException e) {
+        catch (UnexpectedTokenException | IOException e) {
             e.printStackTrace();
             fail();
         }
