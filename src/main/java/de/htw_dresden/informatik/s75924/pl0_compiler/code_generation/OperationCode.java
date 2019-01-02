@@ -16,7 +16,7 @@ enum OperationCode {
     OPERATOR_ADD((byte) 0x0c),
     OPERATOR_SUBTRACT((byte) 0x0d),
     OPERATOR_MULTIPLY((byte) 0x0e),
-    OPERATROR_DIVIDE((byte) 0x0f),
+    OPERATOR_DIVIDE((byte) 0x0f),
     COMPARE_EQUAL((byte) 0x10),
     COMPARE_NOT_EQUAL((byte) 0x11),
     COMPARE_LESS((byte) 0x12),
