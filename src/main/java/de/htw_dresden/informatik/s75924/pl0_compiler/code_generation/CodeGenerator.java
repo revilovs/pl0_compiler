@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class CodeGenerator {
     private ByteBuffer codeBuffer;
     private RandomAccessFile outputFile;
 
     private char comparisonOperator;
+
+    private Stack<Integer> jumpAddressStack;
 
     private static final HashMap<Character, OperationCode> comparisonOperatorMap = new HashMap<>();
 
@@ -28,6 +31,8 @@ public class CodeGenerator {
         outputFile = new RandomAccessFile(outFile, "rw");
         outputFile.setLength(0);
         outputFile.seek(4);
+
+        jumpAddressStack = new Stack<>();
     }
 
     public void generateProcedureEntry(int procedureIndex, int variableLength) {
@@ -122,6 +127,57 @@ public class CodeGenerator {
 
     public void generateOdd() {
         codeBuffer.put(OperationCode.ODD.code);
+    }
+
+    public void saveCurrentAddress() {
+        jumpAddressStack.push(codeBuffer.position());
+    }
+
+    public void generatePreliminaryJNOT() {
+        codeBuffer.put(OperationCode.JUMP_NOT.code);
+
+        codeBuffer.put(shortToBytes((short) 0));
+    }
+
+    public void completeIFJNOT() {
+        int savedAddress = jumpAddressStack.pop();
+
+        int currentAddress = codeBuffer.position();
+
+        int relativeAddress = currentAddress - savedAddress - 3;
+
+        codeBuffer.position(savedAddress + 1);
+
+        codeBuffer.put(shortToBytes((short) relativeAddress));
+
+        codeBuffer.position(currentAddress);
+    }
+
+    public void completeWHILE() {
+        int jNotAddress = jumpAddressStack.pop();
+        int conditionAddress = jumpAddressStack.pop();
+
+        int currentAddress = codeBuffer.position();
+
+        int loopStartJumpDistance = conditionAddress - currentAddress - 3;
+        int loopExitJumpDistance = currentAddress - jNotAddress;
+
+        codeBuffer.put(OperationCode.JUMP.code);
+        codeBuffer.put(shortToBytes((short) loopStartJumpDistance));
+
+        currentAddress = codeBuffer.position();
+
+        codeBuffer.position(jNotAddress + 1);
+
+        codeBuffer.put(shortToBytes((short) loopExitJumpDistance));
+
+        codeBuffer.position(currentAddress);
+    }
+
+    public void generateProcedureCall(int procedureIndex){
+        codeBuffer.put(OperationCode.CALL.code);
+
+        codeBuffer.put(shortToBytes((short) procedureIndex));
     }
 
     public void setComparisonOperator(char comparisonOperator) {

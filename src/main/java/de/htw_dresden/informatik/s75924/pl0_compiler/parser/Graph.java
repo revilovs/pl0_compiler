@@ -64,7 +64,7 @@ public enum Graph {
                 /*  8 */ new Arc(9,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws IOException {
+                    public void apply(Parser parser) {
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
                         NameList nameList = parser.getNameList();
 
@@ -179,7 +179,7 @@ public enum Graph {
                 /* 0 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                    public void apply(Parser parser) throws SemanticRoutineException {
                         NameList nameList = parser.getNameList();
 
                         String identifier = parser.getLexer().getNextToken().getStringValue();
@@ -217,17 +217,53 @@ public enum Graph {
 
         CONDITIONAL_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.IF.value, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(CONDITION, null, 2, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(CONDITION,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                        codeGenerator.saveCurrentAddress();
+                        codeGenerator.generatePreliminaryJNOT();
+                    }
+                }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(SpecialCharacter.THEN.value, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(STATEMENT, null, 4, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(STATEMENT,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        parser.getCodeGenerator().completeIFJNOT();
+                    }
+                }, 4, Arc.NO_ALTERNATIVE),
                 /* 4 */ Arc.END_ARC
         };
 
         LOOP_STATEMENT.arcs = new Arc[] {
-                /* 0 */ new Arc(SpecialCharacter.WHILE.value, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(CONDITION, null, 2, Arc.NO_ALTERNATIVE),
+                /* 0 */ new Arc(SpecialCharacter.WHILE.value,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        parser.getCodeGenerator().saveCurrentAddress();
+                    }
+                }, 1, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(CONDITION,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                        codeGenerator.saveCurrentAddress();
+                        codeGenerator.generatePreliminaryJNOT();
+                    }
+                }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(SpecialCharacter.DO.value, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(STATEMENT, null, 4, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(STATEMENT,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) {
+                        parser.getCodeGenerator().completeWHILE();
+                    }
+                }, 4, Arc.NO_ALTERNATIVE),
                 /* 4 */ Arc.END_ARC
         };
 
@@ -241,7 +277,29 @@ public enum Graph {
 
         PROCEDURE_CALL.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.CALL.value, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(TokenType.IDENTIFIER, null, 2, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(TokenType.IDENTIFIER,
+                new SemanticRoutine() {
+                    @Override
+                    public void apply(Parser parser) throws SemanticRoutineException {
+                        String identifier = parser.getLexer().getNextToken().getStringValue();
+
+                        NameList nameList = parser.getNameList();
+                        CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                        NameListEntry entry = nameList.findIdentifier(identifier);
+
+                        if (entry instanceof ProcedureEntry) {
+                            ProcedureEntry procedureEntry = (ProcedureEntry) entry;
+
+                            int index = nameList.getIndexOfProcedure(procedureEntry);
+
+                            codeGenerator.generateProcedureCall(index);
+
+                        }
+                        else
+                            throw new InvalidIdentifierException();
+                    }
+                }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ Arc.END_ARC
         };
 
@@ -327,7 +385,7 @@ public enum Graph {
                 /* 0 */ new Arc(TokenType.NUMERAL,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws IOException {
+                    public void apply(Parser parser) {
                         NameList nameList = parser.getNameList();
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
                         long constantValue = parser.getLexer().getNextToken().getNumberValue();
@@ -345,7 +403,7 @@ public enum Graph {
                 /* 4 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                    public void apply(Parser parser) throws SemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
                         String identifier = parser.getLexer().getNextToken().getStringValue();

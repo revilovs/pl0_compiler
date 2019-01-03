@@ -36,28 +36,40 @@ public class CodeGeneratorTest {
         Assert.assertArrayEquals(expectedBytes, actualBytes);
     }
 
-    @Test
-    public void generateT7correctly() {
-        try {
-            compileFile("/t7.pl0");
+    private void compileFileCorrectly(String sourceFile, String correctlyCompiledFile){
+        try{
+            compileFile(sourceFile);
 
-            compareFiles("/t7.cl0");
-        } catch (IOException | SemanticRoutineException | URISyntaxException e) {
+            compareFiles(correctlyCompiledFile);
+        } catch (SemanticRoutineException | IOException | URISyntaxException e) {
             e.printStackTrace();
             fail();
         }
     }
 
     @Test
-    public void generateT8correctly() {
-        try {
-            compileFile("/t8.pl0");
+    public void generateT7correctly() {
+        compileFileCorrectly("/t7.pl0", "/t7.cl0");
+    }
 
-            compareFiles("/t8.cl0");
-        } catch (IOException | SemanticRoutineException | URISyntaxException e) {
-            e.printStackTrace();
-            fail();
-        }
+    @Test
+    public void generateT8correctly() {
+        compileFileCorrectly("/t8.pl0", "/t8.cl0");
+    }
+
+    @Test
+    public void generateT2correctly() {
+        compileFileCorrectly("/t2.pl0", "/t2.cl0");
+    }
+
+    @Test
+    public void generateT3correctly() {
+        compileFileCorrectly("/t3.pl0", "/t3.cl0");
+    }
+
+    @Test
+    public void generateFakultaetCorrectly() {
+        compileFileCorrectly("/fakultaet.pl0", "/fakultaet.cl0");
     }
 
     @After

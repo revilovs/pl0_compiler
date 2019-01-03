@@ -118,4 +118,8 @@ public class NameList {
     public int getIndexOfConstant(long constantValue){
         return constants.indexOf(constantValue);
     }
+
+    public int getIndexOfProcedure(ProcedureEntry procedure){
+        return procedures.indexOf(procedure);
+    }
 }

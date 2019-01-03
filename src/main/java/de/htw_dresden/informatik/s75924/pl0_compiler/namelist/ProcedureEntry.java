@@ -2,7 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.namelist;
 
 import java.util.ArrayList;
 
-class ProcedureEntry implements NameListEntry {
+public class ProcedureEntry implements NameListEntry {
     private String name;
     private ProcedureEntry parent;
     private int procedureIndex;
