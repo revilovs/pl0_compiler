@@ -52,10 +52,10 @@ public class CodeGenerator {
     }
 
     public void generatePushVariableValue(int displacement, int procedureIndex, boolean isLocal, boolean isMain) throws IOException {
-        if (isLocal)
-            codeBuffer.write(OperationCode.PUSH_LOCAL_VARIABLE_VALUE.code);
-        else if (isMain)
+        if (isMain)
             codeBuffer.write(OperationCode.PUSH_MAIN_VARIABLE_VALUE.code);
+        else if (isLocal)
+            codeBuffer.write(OperationCode.PUSH_LOCAL_VARIABLE_VALUE.code);
         else
             codeBuffer.write(OperationCode.PUSH_GLOBAL_VARIABLE_VALUE.code);
 
@@ -66,10 +66,10 @@ public class CodeGenerator {
     }
 
     public void generatePushVariableAddress(int displacement, int procedureIndex, boolean isLocal, boolean isMain) throws IOException {
-        if (isLocal)
-            codeBuffer.write(OperationCode.PUSH_LOCAL_VARIABLE_ADDRESS.code);
-        else if (isMain)
+        if (isMain)
             codeBuffer.write(OperationCode.PUSH_MAIN_VARIABLE_ADDRESS.code);
+        else if (isLocal)
+            codeBuffer.write(OperationCode.PUSH_LOCAL_VARIABLE_ADDRESS.code);
         else
             codeBuffer.write(OperationCode.PUSH_GLOBAL_VARIABLE_ADDRESS.code);
 
