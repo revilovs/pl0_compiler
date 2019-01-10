@@ -17,12 +17,18 @@ public class Parser {
         this.codeGenerator = codeGenerator;
     }
 
-    public void parse() throws SemanticRoutineException, IOException {
-        parse(Graph.PROGRAM);
+    public void parse() throws FatalSemanticRoutineException, IOException {
+        try {
+            parse(Graph.PROGRAM);
+        } catch (BacktrackableUnexpectedTokenException e) {
+            throw new UnexpectedTokenException(lexer.getNextToken());
+        }
     }
 
-    private void parse(Graph graph) throws SemanticRoutineException, IOException {
+    private void parse(Graph graph) throws FatalSemanticRoutineException, IOException, BacktrackableUnexpectedTokenException {
         boolean success = false;
+        boolean backTrackPossible = true;
+
         Arc currentArc = graph.getArcs()[0];
 
         Token nextToken;
@@ -43,7 +49,7 @@ public class Parser {
                         parse(currentArc.getGraph());
                         success = true;
                     }
-                    catch (UnexpectedTokenException e) {
+                    catch (BacktrackableUnexpectedTokenException e) {
                         success = false;
                     }
                     break;
@@ -58,6 +64,8 @@ public class Parser {
             if (!success){
                 if (currentArc.getAlternative() != Arc.NO_ALTERNATIVE)
                     currentArc = graph.getArcs()[currentArc.getAlternative()];
+                else if (backTrackPossible)
+                    throw new BacktrackableUnexpectedTokenException();
                 else
                     throw new UnexpectedTokenException(lexer.getNextToken());
             }
@@ -66,6 +74,7 @@ public class Parser {
                 if (currentArc.getArcType() == ArcType.SYMBOL
                         || currentArc.getArcType() == ArcType.IDENTIFIER_OR_NUMERAL){
                     lexer.lex();
+                    backTrackPossible = false;
                 }
 
                 currentArc = graph.getArcs()[currentArc.getNext()];

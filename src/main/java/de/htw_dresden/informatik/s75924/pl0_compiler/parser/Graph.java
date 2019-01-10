@@ -108,7 +108,7 @@ public enum Graph {
                 /* 1 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         String procedureName = parser.getLexer().getNextToken().getStringValue();
 
@@ -126,7 +126,7 @@ public enum Graph {
                 /* 0 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         String identifier = parser.getLexer().getNextToken().getStringValue();
 
@@ -153,7 +153,7 @@ public enum Graph {
                 /* 0 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         String identifier = parser.getLexer().getNextToken().getStringValue();
 
@@ -179,7 +179,7 @@ public enum Graph {
                 /* 0 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
 
                         String identifier = parser.getLexer().getNextToken().getStringValue();
@@ -280,7 +280,7 @@ public enum Graph {
                 /* 1 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         String identifier = parser.getLexer().getNextToken().getStringValue();
 
                         NameList nameList = parser.getNameList();
@@ -308,7 +308,7 @@ public enum Graph {
                 /* 1 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException, IOException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException, IOException {
                         ASSIGNMENT_STATEMENT.arcs[0].getSemanticRoutine().apply(parser);
 
                         parser.getCodeGenerator().generateGetValue();
@@ -403,7 +403,7 @@ public enum Graph {
                 /* 4 */ new Arc(TokenType.IDENTIFIER,
                 new SemanticRoutine() {
                     @Override
-                    public void apply(Parser parser) throws SemanticRoutineException {
+                    public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
                         String identifier = parser.getLexer().getNextToken().getStringValue();

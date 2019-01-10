@@ -2,7 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
 
-public class UnexpectedTokenException extends SemanticRoutineException {
+public class UnexpectedTokenException extends FatalSemanticRoutineException {
     private Token token;
 
     public UnexpectedTokenException(Token token) {

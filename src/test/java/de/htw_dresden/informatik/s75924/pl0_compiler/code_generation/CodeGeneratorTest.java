@@ -2,7 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.code_generation;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.parser.Parser;
-import de.htw_dresden.informatik.s75924.pl0_compiler.parser.SemanticRoutineException;
+import de.htw_dresden.informatik.s75924.pl0_compiler.parser.FatalSemanticRoutineException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 public class CodeGeneratorTest {
     private static final String OUTFILE = "out.cl0";
 
-    private void compileFile(String inFile) throws IOException, SemanticRoutineException {
+    private void compileFile(String inFile) throws IOException, FatalSemanticRoutineException {
         Lexer lexer = new Lexer(new FileReader(getClass().getResource(inFile).getFile()));
 
         CodeGenerator codeGenerator = new CodeGenerator(OUTFILE);
@@ -41,7 +41,7 @@ public class CodeGeneratorTest {
             compileFile(sourceFile);
 
             compareFiles(correctlyCompiledFile);
-        } catch (SemanticRoutineException | IOException | URISyntaxException e) {
+        } catch (FatalSemanticRoutineException | IOException | URISyntaxException e) {
             e.printStackTrace();
             fail();
         }

@@ -5,14 +5,13 @@ import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.InvalidIdentifierException;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;
 
 public class ParserTest {
-    private void parseFile(String name) throws IOException, SemanticRoutineException {
+    private void parseFile(String name) throws IOException, FatalSemanticRoutineException {
         Lexer lexer = new Lexer(new FileReader(getClass().getResource(name).getFile()));
 
         CodeGenerator generator = new CodeGenerator("/dev/null");
@@ -27,7 +26,7 @@ public class ParserTest {
             parseFile(file);
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (SemanticRoutineException e) {
+        } catch (FatalSemanticRoutineException e) {
             fail();
         }
 
@@ -54,7 +53,7 @@ public class ParserTest {
     }
 
     @Test(expected = UnexpectedTokenException.class)
-    public void parseT2InvalidThrowsException() throws SemanticRoutineException {
+    public void parseT2InvalidThrowsException() throws FatalSemanticRoutineException {
         try {
             parseFile("/t2invalid.pl0");
         }
@@ -65,7 +64,7 @@ public class ParserTest {
     }
 
     @Test(expected = InvalidIdentifierException.class)
-    public void parseFakultaetInvalidVarThrowsException() throws SemanticRoutineException {
+    public void parseFakultaetInvalidVarThrowsException() throws FatalSemanticRoutineException {
         try {
             parseFile("/fakultaet-invalid_var.pl0");
         }
@@ -77,7 +76,7 @@ public class ParserTest {
 
 
     @Test(expected = InvalidIdentifierException.class)
-    public void parseT3InvalidProcedureThrowsException() throws SemanticRoutineException {
+    public void parseT3InvalidProcedureThrowsException() throws FatalSemanticRoutineException {
         try {
             parseFile("/t3-invalid_proc.pl0");
         }
@@ -89,7 +88,7 @@ public class ParserTest {
 
 
     @Test(expected = InvalidIdentifierException.class)
-    public void parseT7InvalidConstThrowsException() throws SemanticRoutineException {
+    public void parseT7InvalidConstThrowsException() throws FatalSemanticRoutineException {
         try {
             parseFile("/t7-invalid_const.pl0");
         }

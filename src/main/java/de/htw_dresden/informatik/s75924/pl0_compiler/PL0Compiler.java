@@ -3,7 +3,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler;
 import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.parser.Parser;
-import de.htw_dresden.informatik.s75924.pl0_compiler.parser.SemanticRoutineException;
+import de.htw_dresden.informatik.s75924.pl0_compiler.parser.FatalSemanticRoutineException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -43,7 +43,7 @@ public class PL0Compiler {
 
         try {
             parser.parse();
-        } catch (SemanticRoutineException e) {
+        } catch (FatalSemanticRoutineException e) {
             e.printStackTrace();
         } catch (IOException e) {
             System.err.println("I/O error while parsing.");
