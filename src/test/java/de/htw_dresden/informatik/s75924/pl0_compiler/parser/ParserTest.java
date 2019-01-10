@@ -1,8 +1,9 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
-import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.*;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.InvalidIdentifierException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.FileReader;
@@ -21,80 +22,79 @@ public class ParserTest {
         parser.parse();
     }
 
-    private void parseFileWithoutErrors(String file){
-        try {
-            parseFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FatalSemanticRoutineException e) {
-            fail();
-        }
-
+    private void parseFileWithoutErrors(String file) throws IOException, FatalSemanticRoutineException {
+        parseFile(file);
     }
 
     @Test
-    public void parseT2WithoutErrors() {
+    public void parseT2WithoutErrors() throws IOException, FatalSemanticRoutineException {
         parseFileWithoutErrors("/t2.pl0");
     }
 
     @Test
-    public void parseT3WithoutErrors() {
+    public void parseT3WithoutErrors() throws IOException, FatalSemanticRoutineException {
         parseFileWithoutErrors("/t3.pl0");
     }
 
     @Test
-    public void parseT7WithoutErros() {
+    public void parseT7WithoutErrors() throws IOException, FatalSemanticRoutineException {
         parseFileWithoutErrors("/t7.pl0");
     }
 
     @Test
-    public void parseFakultaetWithoutErrors() {
+    public void parseFakultaetWithoutErrors() throws IOException, FatalSemanticRoutineException {
         parseFileWithoutErrors("/fakultaet.pl0");
     }
 
-    @Test(expected = UnexpectedTokenException.class)
-    public void parseT2InvalidThrowsException() throws FatalSemanticRoutineException {
+    @Test
+    public void parseT2InvalidThrowsException() throws FatalSemanticRoutineException, InvalidTokenTypeException, IOException {
         try {
             parseFile("/t2invalid.pl0");
         }
-        catch (InvalidIdentifierException | IOException e) {
-            e.printStackTrace();
-            fail();
+        catch (UnexpectedTokenException e){
+            Token expected = new Token(TokenType.KEYWORD, SpecialCharacter.BEGIN.value, 3, 1);
+            Assert.assertEquals(new UnexpectedTokenException(expected), e);
         }
     }
 
-    @Test(expected = InvalidIdentifierException.class)
-    public void parseFakultaetInvalidVarThrowsException() throws FatalSemanticRoutineException {
+    @Test
+    public void parseFakultaetInvalidVarThrowsException() throws FatalSemanticRoutineException, InvalidTokenTypeException, IOException {
         try {
             parseFile("/fakultaet-invalid_var.pl0");
         }
-        catch (UnexpectedTokenException | IOException e) {
-            e.printStackTrace();
-            fail();
+        catch (InvalidIdentifierException e){
+            Token expectedToken = new Token(TokenType.IDENTIFIER, "B", 4, 8);
+            Assert.assertEquals(
+                    new InvalidIdentifierException(expectedToken, "Identifier already exists, cannot be declared again"),
+                    e);
         }
     }
 
 
-    @Test(expected = InvalidIdentifierException.class)
-    public void parseT3InvalidProcedureThrowsException() throws FatalSemanticRoutineException {
+    @Test
+    public void parseT3InvalidProcedureThrowsException() throws FatalSemanticRoutineException, IOException, InvalidTokenTypeException {
         try {
             parseFile("/t3-invalid_proc.pl0");
         }
-        catch (UnexpectedTokenException | IOException e) {
-            e.printStackTrace();
-            fail();
+        catch (InvalidIdentifierException e){
+            Token expectedToken = new Token(TokenType.IDENTIFIER, "P1", 8, 11);
+            Assert.assertEquals(
+                    new InvalidIdentifierException(expectedToken, "Identifier already exists, cannot be declared again"),
+                    e);
         }
     }
 
 
-    @Test(expected = InvalidIdentifierException.class)
-    public void parseT7InvalidConstThrowsException() throws FatalSemanticRoutineException {
+    @Test
+    public void parseT7InvalidConstThrowsException() throws FatalSemanticRoutineException, IOException, InvalidTokenTypeException {
         try {
             parseFile("/t7-invalid_const.pl0");
         }
-        catch (UnexpectedTokenException | IOException e) {
-            e.printStackTrace();
-            fail();
+        catch (InvalidIdentifierException e){
+            Token expectedToken = new Token(TokenType.IDENTIFIER, "A", 1, 12);
+            Assert.assertEquals(
+                    new InvalidIdentifierException(expectedToken, "Identifier already exists, cannot be declared again"),
+                    e);
         }
     }
 }
