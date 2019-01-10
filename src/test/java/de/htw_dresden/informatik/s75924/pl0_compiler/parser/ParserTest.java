@@ -9,8 +9,6 @@ import org.junit.Test;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static org.junit.Assert.fail;
-
 public class ParserTest {
     private void parseFile(String name) throws IOException, FatalSemanticRoutineException {
         Lexer lexer = new Lexer(new FileReader(getClass().getResource(name).getFile()));

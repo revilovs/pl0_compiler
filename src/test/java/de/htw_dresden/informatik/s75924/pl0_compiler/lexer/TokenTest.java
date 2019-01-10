@@ -26,7 +26,7 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructNumeralTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(TokenType.NUMERAL, 'A', 1, 1);
+        new Token(TokenType.NUMERAL, 'A', 1, 1);
     }
 
     @Test
@@ -48,12 +48,12 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructSymbolTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(TokenType.SYMBOL, "+", 1, 1);
+        new Token(TokenType.SYMBOL, "+", 1, 1);
     }
 
     @Test
     public void constructKeywordToken() {
-        Token sut = null;
+        Token sut;
         try {
             sut = new Token(TokenType.KEYWORD, SpecialCharacter.VAR.value, 1, 1);
 
@@ -71,7 +71,7 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructKeywordTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(TokenType.KEYWORD, "VAR", 1 , 1);
+        new Token(TokenType.KEYWORD, "VAR", 1, 1);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TokenTest {
 
     @Test(expected = InvalidTokenTypeException.class)
     public void constructIdentifierTokenWrongType() throws InvalidTokenTypeException {
-        Token sut = new Token(TokenType.IDENTIFIER, 'x', 1, 1);
+        new Token(TokenType.IDENTIFIER, 'x', 1, 1);
     }
 
     @Test

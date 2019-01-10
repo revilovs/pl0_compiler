@@ -86,15 +86,15 @@ public class Parser {
             throw new UnexpectedTokenException(nextToken);
     }
 
-    protected Lexer getLexer() {
+    Lexer getLexer() {
         return lexer;
     }
 
-    protected NameList getNameList() {
+    NameList getNameList() {
         return nameList;
     }
 
-    protected CodeGenerator getCodeGenerator() {
+    CodeGenerator getCodeGenerator() {
         return codeGenerator;
     }
 }

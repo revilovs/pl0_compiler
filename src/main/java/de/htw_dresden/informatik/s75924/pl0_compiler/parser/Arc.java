@@ -2,7 +2,7 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 
-public class Arc {
+class Arc {
     private ArcType type;
 
     private char symbolValue;
@@ -14,7 +14,7 @@ public class Arc {
     private int next;
     private int alternative;
 
-    public static final int NO_ALTERNATIVE = -1;
+    static final int NO_ALTERNATIVE = -1;
 
     /**
      * Constructs a Symbol bow for keywords or operators
@@ -23,7 +23,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(char symbolValue, SemanticRoutine semanticRoutine, int next, int alternative) {
+    Arc(char symbolValue, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.SYMBOL;
         this.symbolValue = symbolValue;
         this.semanticRoutine = semanticRoutine;
@@ -38,7 +38,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(Graph graph, SemanticRoutine semanticRoutine, int next, int alternative) {
+    Arc(Graph graph, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.GRAPH;
         this.graph = graph;
         this.semanticRoutine = semanticRoutine;
@@ -53,7 +53,7 @@ public class Arc {
      * @param next index of the next arc
      * @param alternative index of alternative arc
      */
-    public Arc(TokenType tokenType, SemanticRoutine semanticRoutine, int next, int alternative) {
+    Arc(TokenType tokenType, SemanticRoutine semanticRoutine, int next, int alternative) {
         this.type = ArcType.IDENTIFIER_OR_NUMERAL;
         this.tokenType = tokenType;
         this.semanticRoutine = semanticRoutine;
@@ -65,7 +65,7 @@ public class Arc {
      * Constructs a NIL Arc without a semantic routine
      * @param next the index of the next arc
      */
-    public Arc(int next) {
+    Arc(int next) {
         this.type = ArcType.NIL;
         this.alternative = NO_ALTERNATIVE;
         this.next = next;
@@ -76,7 +76,7 @@ public class Arc {
      * @param next the index of the next arc
      * @param semanticRoutine The arc's semantic routine
      */
-    public Arc(int next, SemanticRoutine semanticRoutine) {
+    Arc(int next, SemanticRoutine semanticRoutine) {
         this.type = ArcType.NIL;
         this.alternative = NO_ALTERNATIVE;
         this.next = next;
@@ -92,33 +92,33 @@ public class Arc {
         this.alternative = NO_ALTERNATIVE;
     }
 
-    public static final Arc END_ARC = new Arc();
+    static final Arc END_ARC = new Arc();
 
-    public ArcType getArcType() {
+    ArcType getArcType() {
         return type;
     }
 
-    public char getSymbolValue() {
+    char getSymbolValue() {
         return symbolValue;
     }
 
-    public Graph getGraph() {
+    Graph getGraph() {
         return graph;
     }
 
-    public TokenType getTokenType() {
+    TokenType getTokenType() {
         return tokenType;
     }
 
-    public SemanticRoutine getSemanticRoutine() {
+    SemanticRoutine getSemanticRoutine() {
         return semanticRoutine;
     }
 
-    public int getNext() {
+    int getNext() {
         return next;
     }
 
-    public int getAlternative() {
+    int getAlternative() {
         return alternative;
     }
 }

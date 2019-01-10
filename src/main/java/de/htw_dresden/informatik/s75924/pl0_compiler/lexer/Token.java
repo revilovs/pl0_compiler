@@ -66,11 +66,11 @@ public class Token {
         return charValue;
     }
 
-    public int getRow() {
+    int getRow() {
         return row;
     }
 
-    public int getColumn() {
+    int getColumn() {
         return column;
     }
 
