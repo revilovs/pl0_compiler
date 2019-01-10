@@ -1,4 +1,9 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
-public class BacktrackableUnexpectedTokenException extends Exception {
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
+
+class BacktrackableUnexpectedTokenException extends SemanticRoutineException {
+    BacktrackableUnexpectedTokenException(Token token) {
+        super(token, "Unexpected token");
+    }
 }

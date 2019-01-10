@@ -65,7 +65,7 @@ public class Parser {
                 if (currentArc.getAlternative() != Arc.NO_ALTERNATIVE)
                     currentArc = graph.getArcs()[currentArc.getAlternative()];
                 else if (backTrackPossible)
-                    throw new BacktrackableUnexpectedTokenException();
+                    throw new BacktrackableUnexpectedTokenException(lexer.getNextToken());
                 else
                     throw new UnexpectedTokenException(lexer.getNextToken());
             }

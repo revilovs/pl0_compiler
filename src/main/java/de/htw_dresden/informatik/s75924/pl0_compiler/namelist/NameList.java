@@ -1,6 +1,6 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.namelist;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
 
 import java.util.ArrayList;
 
@@ -37,16 +37,18 @@ public class NameList {
         nextConstantName = null;
     }
 
-    public void addVariable(String name) throws InvalidIdentifierException {
+    public void addVariable(Token token) throws InvalidIdentifierException {
+        String name = token.getStringValue();
         if (findIdentifierLocal(name))
-            throw new InvalidIdentifierException();
+            throw new InvalidIdentifierException(token, "Identifier already exists, cannot be declared again");
 
         currentProcedure.addVariableEntry(name);
     }
 
-    public void addProcedure(String name) throws InvalidIdentifierException {
+    public void addProcedure(Token token) throws InvalidIdentifierException {
+        String name = token.getStringValue();
         if (findIdentifierLocal(name))
-            throw new InvalidIdentifierException();
+            throw new InvalidIdentifierException(token, "Identifier already exists, cannot be declared again");
 
         ProcedureEntry entry = new ProcedureEntry(name, procedures.size(), currentProcedure);
 
@@ -68,9 +70,10 @@ public class NameList {
         return currentProcedure.getIdentifiers().stream().anyMatch((entry -> entry.getName().equals(identifier)));
     }
 
-    public void setConstantName(String name) throws InvalidIdentifierException {
+    public void setConstantName(Token token) throws InvalidIdentifierException {
+        String name = token.getStringValue();
         if (findIdentifierLocal(name))
-            throw new InvalidIdentifierException();
+            throw new InvalidIdentifierException(token, "Identifier already exists, cannot be declared again");
 
         nextConstantName = name;
     }

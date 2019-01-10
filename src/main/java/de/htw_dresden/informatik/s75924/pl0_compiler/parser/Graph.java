@@ -1,7 +1,9 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.code_generation.CodeGenerator;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Lexer;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.SpecialCharacter;
+import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.*;
 
@@ -110,9 +112,9 @@ public enum Graph {
                     @Override
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
-                        String procedureName = parser.getLexer().getNextToken().getStringValue();
+                        Token token = parser.getLexer().getNextToken();
 
-                        nameList.addProcedure(procedureName);
+                        nameList.addProcedure(token);
                     }
                 },
                 2, Arc.NO_ALTERNATIVE),
@@ -128,9 +130,9 @@ public enum Graph {
                     @Override
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
-                        String identifier = parser.getLexer().getNextToken().getStringValue();
+                        Token token = parser.getLexer().getNextToken();
 
-                        nameList.setConstantName(identifier);
+                        nameList.setConstantName(token);
                     }
                 },
                 1, Arc.NO_ALTERNATIVE),
@@ -155,9 +157,9 @@ public enum Graph {
                     @Override
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
-                        String identifier = parser.getLexer().getNextToken().getStringValue();
+                        Token token = parser.getLexer().getNextToken();
 
-                        nameList.addVariable(identifier);
+                        nameList.addVariable(token);
                     }
                 },
                 1, Arc.NO_ALTERNATIVE),
@@ -181,8 +183,9 @@ public enum Graph {
                     @Override
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
+                        Lexer lexer = parser.getLexer();
 
-                        String identifier = parser.getLexer().getNextToken().getStringValue();
+                        String identifier = lexer.getNextToken().getStringValue();
 
                         NameListEntry entry = nameList.findIdentifier(identifier);
                         if (entry!= null){
@@ -198,10 +201,10 @@ public enum Graph {
                                         .generatePushVariableAddress(displacement, procedureIndex, isLocal, isMain);
                             }
                             else
-                                throw new InvalidIdentifierException();
+                                throw new InvalidIdentifierException(lexer.getNextToken(), "Identifier is not a variable");
                         }
                         else
-                            throw new InvalidIdentifierException();
+                            throw new InvalidIdentifierException(lexer.getNextToken(), "Identifier not found");
                     }
                 }, 1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc(SpecialCharacter.ASSIGN.value, null, 2, Arc.NO_ALTERNATIVE),
@@ -281,7 +284,8 @@ public enum Graph {
                 new SemanticRoutine() {
                     @Override
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
-                        String identifier = parser.getLexer().getNextToken().getStringValue();
+                        Token token = parser.getLexer().getNextToken();
+                        String identifier = token.getStringValue();
 
                         NameList nameList = parser.getNameList();
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
@@ -297,7 +301,7 @@ public enum Graph {
 
                         }
                         else
-                            throw new InvalidIdentifierException();
+                            throw new InvalidIdentifierException(token, "Identifier is no procedure name");
                     }
                 }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ Arc.END_ARC
@@ -406,7 +410,8 @@ public enum Graph {
                     public void apply(Parser parser) throws FatalSemanticRoutineException {
                         NameList nameList = parser.getNameList();
                         CodeGenerator codeGenerator = parser.getCodeGenerator();
-                        String identifier = parser.getLexer().getNextToken().getStringValue();
+                        Token token = parser.getLexer().getNextToken();
+                        String identifier = token.getStringValue();
 
                         NameListEntry entry = nameList.findIdentifier(identifier);
                         if (entry != null){
@@ -429,10 +434,10 @@ public enum Graph {
                                 codeGenerator.generatePushConstant(constantIndex);
                             }
                             else
-                                throw new InvalidIdentifierException();
+                                throw new InvalidIdentifierException(token, "Identifier is not a variable or constant");
                         }
                         else
-                            throw new InvalidIdentifierException();
+                            throw new InvalidIdentifierException(token, "Identifier not found");
                     }
                 }, 5, Arc.NO_ALTERNATIVE),
                 /* 5 */ Arc.END_ARC
