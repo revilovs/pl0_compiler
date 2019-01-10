@@ -1,0 +1,14 @@
+const a=10, b=10;
+var c,d;
+begin
+    c:= 1;
+    d:= 1;
+    while c<a do
+        while d<b do
+            begin
+                !c;
+                !d;
+                c:= c+1;
+                d:= d+1
+            end
+end.

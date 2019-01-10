@@ -72,6 +72,16 @@ public class CodeGeneratorTest {
         compileFileCorrectly("/fakultaet.pl0", "/fakultaet.cl0");
     }
 
+    @Test
+    public void generateGCDCorrectly() {
+        compileFileCorrectly("/gcd.pl0", "/gcd.cl0");
+    }
+
+    @Test
+    public void generateWhileWhileCorrectly() {
+        compileFileCorrectly("/whilewhile.pl0", "/whilewhile.cl0");
+    }
+
     @After
     public void tearDown() {
         (new File(OUTFILE)).delete();
