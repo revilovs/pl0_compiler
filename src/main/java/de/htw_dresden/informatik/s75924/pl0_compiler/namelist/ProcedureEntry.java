@@ -2,6 +2,9 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.namelist;
 
 import java.util.ArrayList;
 
+/**
+ * Class representing a procedure entry in the name list
+ */
 public class ProcedureEntry implements NameListEntry {
     private String name;
     private ProcedureEntry parent;

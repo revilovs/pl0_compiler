@@ -2,6 +2,9 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.parser;
 
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 
+/**
+ * Class representing a single arc of a syntax graph
+ */
 class Arc {
     private ArcType type;
 

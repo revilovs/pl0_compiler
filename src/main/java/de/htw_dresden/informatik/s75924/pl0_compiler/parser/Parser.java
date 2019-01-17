@@ -7,16 +7,29 @@ import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.NameList;
 
 import java.io.IOException;
 
+/**
+ * The centerpiece of the compiler. The Parser checks the grammar and calls the semantic routines for the NameList and CodeGenerator
+ */
 public class Parser {
     private Lexer lexer;
     private NameList nameList = new NameList();
     private CodeGenerator codeGenerator;
 
+    /**
+     * Constructor
+     * @param lexer the lexer from which to get the tokens
+     * @param codeGenerator the code generator with which to generate the code
+     */
     public Parser(Lexer lexer, CodeGenerator codeGenerator) {
         this.lexer = lexer;
         this.codeGenerator = codeGenerator;
     }
 
+    /**
+     * Parses the complete program
+     * @throws FatalSemanticRoutineException if the source code contains an error
+     * @throws IOException if an I/O error occurs
+     */
     public void parse() throws FatalSemanticRoutineException, IOException {
         try {
             parse(Graph.PROGRAM);

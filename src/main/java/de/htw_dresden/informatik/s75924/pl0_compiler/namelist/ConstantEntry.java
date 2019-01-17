@@ -1,5 +1,8 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.namelist;
 
+/**
+ * Class for entries of constants in the name list
+ */
 public class ConstantEntry implements NameListEntry {
     private int procedureIndex;
     private long value;

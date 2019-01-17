@@ -1,5 +1,8 @@
 package de.htw_dresden.informatik.s75924.pl0_compiler.namelist;
 
+/**
+ * Class representing a variable entry in the name list
+ */
 public class VariableEntry implements NameListEntry {
     private String name;
     private int procedureIndex;

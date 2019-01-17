@@ -10,7 +10,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * The class containing the main function
+ */
 public class PL0Compiler {
+    /**
+     * The main function of the compiler that initialises lexer, parser and code generator, starts the parser and
+     * prints out any errors that might occur
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage: PL0Compiler <source file> [<output file name>]");

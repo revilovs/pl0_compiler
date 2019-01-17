@@ -7,8 +7,9 @@ import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.Token;
 import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.TokenType;
 import de.htw_dresden.informatik.s75924.pl0_compiler.namelist.*;
 
-import java.io.IOException;
-
+/**
+ * An enumeration for all syntax graphs of the PL/0 language, made up of Arcs
+ */
 public enum Graph {
     PROGRAM,
     BLOCK,

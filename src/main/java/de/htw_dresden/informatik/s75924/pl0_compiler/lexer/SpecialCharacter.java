@@ -3,6 +3,9 @@ package de.htw_dresden.informatik.s75924.pl0_compiler.lexer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum for Special characters representing keywords and operators containing multiple characters
+ */
 public enum SpecialCharacter {
     ASSIGN(128),
     LESS_OR_EQUAL(129),

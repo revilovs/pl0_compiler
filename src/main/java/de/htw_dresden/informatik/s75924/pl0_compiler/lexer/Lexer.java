@@ -4,6 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Class for splitting the input file into tokens
+ */
 public class Lexer {
     /**
      * Enum containing the states of the Lexer's FSM.
@@ -121,12 +124,19 @@ public class Lexer {
     private char currentChar;
     private String currentString;
 
+    /**
+     * Constructor
+     * @param reader the reader from which to read
+     */
     public Lexer(FileReader reader){
         this.reader = reader;
         read();
         lex();
     }
 
+    /**
+     * Lexes the next token
+     */
     public void lex(){
         current = next;
 
@@ -168,6 +178,10 @@ public class Lexer {
         return current;
     }
 
+    /**
+     * Returns the next token
+     * @return the next token
+     */
     public Token getNextToken(){
         return next;
     }
