@@ -53,7 +53,7 @@ public class PL0Compiler {
             System.out.println("Compilation successful");
         }
         catch (FatalSemanticRoutineException e) {
-            System.out.println(e.toString());
+            System.out.println("Error: " + e.toString());
             (new File(outFileName)).delete();
             System.exit(4);
         }
