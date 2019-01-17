@@ -6,7 +6,7 @@
 
     <groupId>de.htw_dresden.informatik.s75924</groupId>
     <artifactId>pl0_compiler</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>

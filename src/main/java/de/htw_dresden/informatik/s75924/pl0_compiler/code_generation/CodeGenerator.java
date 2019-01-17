@@ -4,17 +4,17 @@ import de.htw_dresden.informatik.s75924.pl0_compiler.lexer.SpecialCharacter;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class CodeGenerator {
-    private ByteBuffer codeBuffer;
     private RandomAccessFile outputFile;
+
+    private long currentProcedureStartAddress = 0;
 
     private char comparisonOperator;
 
-    private Stack<Integer> jumpAddressStack;
+    private Stack<Long> jumpAddressStack;
 
     private static final HashMap<Character, OperationCode> comparisonOperatorMap = new HashMap<>();
 
@@ -35,157 +35,156 @@ public class CodeGenerator {
         jumpAddressStack = new Stack<>();
     }
 
-    public void generateProcedureEntry(int procedureIndex, int variableLength) {
-        //TODO: make size dynamic
-        codeBuffer = ByteBuffer.allocate(4096);
+    public void generateProcedureEntry(int procedureIndex, int variableLength) throws IOException {
+        currentProcedureStartAddress = outputFile.getFilePointer();
 
-        codeBuffer.put(OperationCode.ENTRY_PROCEDURE.code);
-        codeBuffer.put(shortToBytes((short) 0));
-        codeBuffer.put(shortToBytes((short) procedureIndex));
-        codeBuffer.put(shortToBytes((short) variableLength));
+        outputFile.write(OperationCode.ENTRY_PROCEDURE.code);
+        outputFile.write(shortToBytes((short) 0));
+        outputFile.write(shortToBytes((short) procedureIndex));
+        outputFile.write(shortToBytes((short) variableLength));
     }
 
     public void generateProcedureReturn() throws IOException {
-        codeBuffer.put(OperationCode.RETURN_PROCEDURE.code);
+        outputFile.write(OperationCode.RETURN_PROCEDURE.code);
 
-        byte[] codeBytes = new byte[codeBuffer.position()];
+        long currentPosition = outputFile.getFilePointer();
 
-        System.arraycopy(codeBuffer.array(),0, codeBytes, 0, codeBuffer.position());
+        long procedureCodeLength = currentPosition - currentProcedureStartAddress;
+        byte[] codeLengthBytes = shortToBytes((short) procedureCodeLength);
 
-        byte[] codeLengthBytes = shortToBytes((short) codeBytes.length);
-
-        System.arraycopy(codeLengthBytes, 0, codeBytes, 1, codeLengthBytes.length);
-
-        outputFile.write(codeBytes);
+        outputFile.seek(currentProcedureStartAddress + 1);
+        outputFile.write(codeLengthBytes);
+        
+        outputFile.seek(currentPosition);
     }
 
-    public void generatePushVariableValue(int displacement, int procedureIndex, boolean isLocal, boolean isMain) {
+    public void generatePushVariableValue(int displacement, int procedureIndex, boolean isLocal, boolean isMain) throws IOException {
         if (isMain)
-            codeBuffer.put(OperationCode.PUSH_MAIN_VARIABLE_VALUE.code);
+            outputFile.write(OperationCode.PUSH_MAIN_VARIABLE_VALUE.code);
         else if (isLocal)
-            codeBuffer.put(OperationCode.PUSH_LOCAL_VARIABLE_VALUE.code);
+            outputFile.write(OperationCode.PUSH_LOCAL_VARIABLE_VALUE.code);
         else
-            codeBuffer.put(OperationCode.PUSH_GLOBAL_VARIABLE_VALUE.code);
+            outputFile.write(OperationCode.PUSH_GLOBAL_VARIABLE_VALUE.code);
 
-        codeBuffer.put(shortToBytes((short) displacement));
+        outputFile.write(shortToBytes((short) displacement));
 
         if (!isLocal && !isMain)
-            codeBuffer.put(shortToBytes((short) procedureIndex));
+            outputFile.write(shortToBytes((short) procedureIndex));
     }
 
-    public void generatePushVariableAddress(int displacement, int procedureIndex, boolean isLocal, boolean isMain) {
+    public void generatePushVariableAddress(int displacement, int procedureIndex, boolean isLocal, boolean isMain) throws IOException {
         if (isMain)
-            codeBuffer.put(OperationCode.PUSH_MAIN_VARIABLE_ADDRESS.code);
+            outputFile.write(OperationCode.PUSH_MAIN_VARIABLE_ADDRESS.code);
         else if (isLocal)
-            codeBuffer.put(OperationCode.PUSH_LOCAL_VARIABLE_ADDRESS.code);
+            outputFile.write(OperationCode.PUSH_LOCAL_VARIABLE_ADDRESS.code);
         else
-            codeBuffer.put(OperationCode.PUSH_GLOBAL_VARIABLE_ADDRESS.code);
+            outputFile.write(OperationCode.PUSH_GLOBAL_VARIABLE_ADDRESS.code);
 
-        codeBuffer.put(shortToBytes((short) displacement));
+        outputFile.write(shortToBytes((short) displacement));
 
         if (!isLocal && !isMain)
-            codeBuffer.put(shortToBytes((short) procedureIndex));
+            outputFile.write(shortToBytes((short) procedureIndex));
     }
 
-    public void generatePushConstant(int constantIndex) {
-        codeBuffer.put(OperationCode.PUSH_CONST.code);
+    public void generatePushConstant(int constantIndex) throws IOException {
+        outputFile.write(OperationCode.PUSH_CONST.code);
 
-        codeBuffer.put(shortToBytes((short) constantIndex));
+        outputFile.write(shortToBytes((short) constantIndex));
     }
 
-    public void generateStoreValue() {
-        codeBuffer.put(OperationCode.STORE_VALUE.code);
+    public void generateStoreValue() throws IOException {
+        outputFile.write(OperationCode.STORE_VALUE.code);
     }
 
-    public void generatePutValue() {
-        codeBuffer.put(OperationCode.PUT_VALUE.code);
+    public void generatePutValue() throws IOException {
+        outputFile.write(OperationCode.PUT_VALUE.code);
     }
 
-    public void generateGetValue() {
-        codeBuffer.put(OperationCode.GET_VALUE.code);
+    public void generateGetValue() throws IOException {
+        outputFile.write(OperationCode.GET_VALUE.code);
     }
 
-    public void generateNegativeSign() {
-        codeBuffer.put(OperationCode.NEGATIVE_SIGN.code);
+    public void generateNegativeSign() throws IOException {
+        outputFile.write(OperationCode.NEGATIVE_SIGN.code);
     }
 
-    public void generateAddOperator(){
-        codeBuffer.put(OperationCode.OPERATOR_ADD.code);
+    public void generateAddOperator() throws IOException {
+        outputFile.write(OperationCode.OPERATOR_ADD.code);
     }
 
-    public void generateSubtractOperator(){
-        codeBuffer.put(OperationCode.OPERATOR_SUBTRACT.code);
+    public void generateSubtractOperator() throws IOException {
+        outputFile.write(OperationCode.OPERATOR_SUBTRACT.code);
     }
 
-    public void generateMultiplyOperator(){
-        codeBuffer.put(OperationCode.OPERATOR_MULTIPLY.code);
+    public void generateMultiplyOperator() throws IOException {
+        outputFile.write(OperationCode.OPERATOR_MULTIPLY.code);
     }
 
-    public void generateDivideOperator() {
-        codeBuffer.put(OperationCode.OPERATOR_DIVIDE.code);
+    public void generateDivideOperator() throws IOException {
+        outputFile.write(OperationCode.OPERATOR_DIVIDE.code);
     }
 
-    public void generateOdd() {
-        codeBuffer.put(OperationCode.ODD.code);
+    public void generateOdd() throws IOException {
+        outputFile.write(OperationCode.ODD.code);
     }
 
-    public void saveCurrentAddress() {
-        jumpAddressStack.push(codeBuffer.position());
+    public void saveCurrentAddress() throws IOException {
+        jumpAddressStack.push(outputFile.getFilePointer());
     }
 
-    public void generatePreliminaryJNOT() {
-        codeBuffer.put(OperationCode.JUMP_NOT.code);
+    public void generatePreliminaryJNOT() throws IOException {
+        outputFile.write(OperationCode.JUMP_NOT.code);
 
-        codeBuffer.put(shortToBytes((short) 0));
+        outputFile.write(shortToBytes((short) 0));
     }
 
-    public void completeIFJNOT() {
-        int savedAddress = jumpAddressStack.pop();
+    public void completeIFJNOT() throws IOException {
+        long savedAddress = jumpAddressStack.pop();
 
-        int currentAddress = codeBuffer.position();
+        long currentAddress = outputFile.getFilePointer();
 
-        int relativeAddress = currentAddress - savedAddress - 3;
+        long relativeAddress = currentAddress - savedAddress - 3;
 
-        codeBuffer.position(savedAddress + 1);
+        outputFile.seek(savedAddress + 1);
 
-        codeBuffer.put(shortToBytes((short) relativeAddress));
+        outputFile.write(shortToBytes((short) relativeAddress));
 
-        codeBuffer.position(currentAddress);
+        outputFile.seek(currentAddress);
     }
 
-    public void completeWHILE() {
-        int jNotAddress = jumpAddressStack.pop();
-        int conditionAddress = jumpAddressStack.pop();
+    public void completeWHILE() throws IOException {
+        long jNotAddress = jumpAddressStack.pop();
+        long conditionAddress = jumpAddressStack.pop();
 
-        int currentAddress = codeBuffer.position();
+        long currentAddress = outputFile.getFilePointer();
 
-        int loopStartJumpDistance = conditionAddress - currentAddress - 3;
-        int loopExitJumpDistance = currentAddress - jNotAddress;
+        long loopStartJumpDistance = conditionAddress - currentAddress - 3;
+        long loopExitJumpDistance = currentAddress - jNotAddress;
 
-        codeBuffer.put(OperationCode.JUMP.code);
-        codeBuffer.put(shortToBytes((short) loopStartJumpDistance));
+        outputFile.write(OperationCode.JUMP.code);
+        outputFile.write(shortToBytes((short) loopStartJumpDistance));
 
-        currentAddress = codeBuffer.position();
+        currentAddress = outputFile.getFilePointer();
 
-        codeBuffer.position(jNotAddress + 1);
+        outputFile.seek(jNotAddress + 1);
 
-        codeBuffer.put(shortToBytes((short) loopExitJumpDistance));
+        outputFile.write(shortToBytes((short) loopExitJumpDistance));
 
-        codeBuffer.position(currentAddress);
+        outputFile.seek(currentAddress);
     }
 
-    public void generateProcedureCall(int procedureIndex){
-        codeBuffer.put(OperationCode.CALL.code);
+    public void generateProcedureCall(int procedureIndex) throws IOException {
+        outputFile.write(OperationCode.CALL.code);
 
-        codeBuffer.put(shortToBytes((short) procedureIndex));
+        outputFile.write(shortToBytes((short) procedureIndex));
     }
 
     public void setComparisonOperator(char comparisonOperator) {
         this.comparisonOperator = comparisonOperator;
     }
 
-    public void generateComparisonOperator() {
-        codeBuffer.put(comparisonOperatorMap.get(comparisonOperator).code);
+    public void generateComparisonOperator() throws IOException {
+        outputFile.write(comparisonOperatorMap.get(comparisonOperator).code);
     }
 
     public void writeConstantBlock(long[] constantBlock) throws IOException {
