@@ -1,5 +1,9 @@
 var a,b,Max;
 procedure p1;
+/* this is a comment
+ it spans multiple lines
+ it contains a star * and a slash / and ends
+ here */
 begin
   if a>=b then Max:=a;
   if a< b then Max:=b

@@ -1,2 +1,2 @@
-const a=5, b=7;
+const a=5, /* comment in the middle of nowhere */ b=7;
 !a.
