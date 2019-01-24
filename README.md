@@ -7,6 +7,8 @@ It does not generate machine code, it generates a byte code that works with the 
 
 The grammar implemented has one minor difference to the actual PL/0 grammar: It does not permit *statement* to be empty.
 
+As another additional feature this compiler supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
+
 ## Requirements
 This project uses Java 8 and maven. If you don't have maven, you can also compile with javac.
 
@@ -35,6 +37,11 @@ You can run the tests with
 ```bash
 mvn test
 ```
+
+## Lexer
+The lexer is implemented with a finite state machine described in the following state chart diagram:
+![Lexer's FSM diagram](doc/lexer_fsm.png)
+All States starting with `E` are final states signifying a completed token. `Z10`, `Z11`, and `Z12` are responsible for comments. As you can see, comments are not formed into a token but simply skipped like whitespace.
 
 ## Grammar
 The implemented grammar is described by syntax graphs, which are implemented in the class `de.htw_dresden.informatik.s75924.parser.Graph`. These are their visual representations:
