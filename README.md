@@ -7,9 +7,10 @@ It does not generate machine code, it generates a byte code that works with the 
 
 ## Language
 The grammar implemented has some minor differences to the actual PL/0 grammar: 
-* *Statement* is not permitted to be empty.
+* `Statement` is not permitted to be empty.
 * It supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
-* It permits string output in the form of `!"This is a string with \"escaped quote marks\" and an escaped backslash \\"`. Refer to the syntax graph of `Statement` and the Lexer FSM for details.
+* It permits string output in the form of `!"This is a string with \"escaped quote marks\" and an escaped backslash \\"`. Refer to the [syntax graph of Statement](#statement) and the [Lexer FSM](#lexer) for details.
+* It permits conditional statements with `ELSE` branches. See the [Conditional Statement graph](#conditional-statement)
 
 ## Requirements
 This project uses Java 8 and maven. If you don't have maven, you can also compile with javac.
