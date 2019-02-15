@@ -292,6 +292,22 @@ public class CodeGenerator {
     }
 
     /**
+     * Generates the put string code
+     * @param string the string to be output
+     * @throws IOException if an I/O error occurs while writing
+     */
+    public void generatePutString(String string) throws IOException {
+        outputFile.write(OperationCode.PUT_STRING.code);
+
+        int arrayLength = string.length() + 1;
+        byte[] bytes = new byte[arrayLength];
+        bytes[arrayLength -1] = 0;
+        System.arraycopy(string.getBytes(), 0, bytes, 0 , arrayLength - 1);
+
+        outputFile.write(bytes);
+    }
+
+    /**
      * Writes the constant block to the output file
      * @param constantBlock the constant block
      * @throws IOException if an I/O error occurs while writing

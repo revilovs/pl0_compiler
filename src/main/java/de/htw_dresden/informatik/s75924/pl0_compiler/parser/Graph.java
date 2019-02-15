@@ -268,7 +268,9 @@ public enum Graph {
 
         OUTPUT_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc('!', null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(TokenType.STRING, null, 3, 2),
+                /* 1 */ new Arc(TokenType.STRING,
+                parser -> parser.getCodeGenerator().generatePutString(parser.getLexer().getNextToken().getStringValue()),
+                3, 2),
                 /* 2 */ new Arc(EXPRESSION,
                 parser -> parser.getCodeGenerator().generatePutValue(), 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ Arc.END_ARC

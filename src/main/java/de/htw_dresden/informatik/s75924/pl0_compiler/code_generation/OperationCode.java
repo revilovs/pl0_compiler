@@ -27,7 +27,8 @@ enum OperationCode {
     RETURN_PROCEDURE((byte) 0x17),
     JUMP((byte) 0x18),
     JUMP_NOT((byte) 0x19),
-    ENTRY_PROCEDURE((byte) 0x1a);
+    ENTRY_PROCEDURE((byte) 0x1a),
+    PUT_STRING((byte) 0x1B);
 
     byte code;
 
