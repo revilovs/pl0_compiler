@@ -1,0 +1,13 @@
+var a;
+begin
+    ?a;
+    if a < 3 then
+        ! "a is small"
+    else if a > 10 then
+        if a > 20 then
+            ! "a is really big"
+        else
+            ! "a is quite big"
+    else
+        ! "a is neither big nor small"
+end.

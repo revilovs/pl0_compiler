@@ -20,7 +20,8 @@ public enum SpecialCharacter {
     PROCEDURE(138),
     THEN(139),
     VAR(140),
-    WHILE(141);
+    WHILE(141),
+    ELSE(142);
 
     public char value;
 

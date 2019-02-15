@@ -202,7 +202,10 @@ public enum Graph {
                 /* 2 */ new Arc(SpecialCharacter.THEN.value, null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(STATEMENT,
                 parser -> parser.getCodeGenerator().completeIFJNOT(), 4, Arc.NO_ALTERNATIVE),
-                /* 4 */ Arc.END_ARC
+                /* 4 */ new Arc(SpecialCharacter.ELSE.value, null, 5, 6),
+                /* 5 */ new Arc(Graph.STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
+                /* 6 */ new Arc(7, null),
+                /* 7 */ Arc.END_ARC
         };
 
         LOOP_STATEMENT.arcs = new Arc[] {
