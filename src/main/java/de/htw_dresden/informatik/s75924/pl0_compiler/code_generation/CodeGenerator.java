@@ -222,10 +222,37 @@ public class CodeGenerator {
     }
 
     /**
-     * Completes the JNOT code for the conditional statement
+     * Generates the JUMP code with the jump distance set to 0
      * @throws IOException if an I/O error occurs while writing
      */
-    public void completeIFJNOT() throws IOException {
+    public void generatePreliminaryELSEJUMP() throws IOException {
+        outputFile.write(OperationCode.JUMP.code);
+
+        outputFile.write(shortToBytes((short) 0));
+    }
+
+    /**
+     * Completes the JNOT code for the conditional statement
+     * @param elsePresent should be true if and only if the conditional statement has an ELSE branch
+     * @throws IOException if an I/O error occurs while writing
+     */
+    public void completeIFJNOT(boolean elsePresent) throws IOException {
+        long savedAddress = jumpAddressStack.pop();
+
+        long currentAddress = outputFile.getFilePointer();
+
+        long relativeAddress = currentAddress - savedAddress - 3
+                + (elsePresent ? 3 : 0);
+
+        outputFile.seek(savedAddress + 1);
+        outputFile.write(shortToBytes((short) relativeAddress));
+        outputFile.seek(currentAddress);
+    }
+
+    /**
+     * Completes the JUMP code for the ELSE branch of a conditional statement
+     */
+    public void completeELSEJUMP() throws IOException {
         long savedAddress = jumpAddressStack.pop();
 
         long currentAddress = outputFile.getFilePointer();
@@ -233,9 +260,7 @@ public class CodeGenerator {
         long relativeAddress = currentAddress - savedAddress - 3;
 
         outputFile.seek(savedAddress + 1);
-
         outputFile.write(shortToBytes((short) relativeAddress));
-
         outputFile.seek(currentAddress);
     }
 

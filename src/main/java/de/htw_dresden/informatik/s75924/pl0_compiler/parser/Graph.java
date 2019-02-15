@@ -200,11 +200,20 @@ public enum Graph {
                     codeGenerator.generatePreliminaryJNOT();
                 }, 2, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(SpecialCharacter.THEN.value, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(STATEMENT,
-                parser -> parser.getCodeGenerator().completeIFJNOT(), 4, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(SpecialCharacter.ELSE.value, null, 5, 6),
-                /* 5 */ new Arc(Graph.STATEMENT, null, 7, Arc.NO_ALTERNATIVE),
-                /* 6 */ new Arc(7, null),
+                /* 3 */ new Arc(STATEMENT, null, 4, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(SpecialCharacter.ELSE.value,
+                parser -> {
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                    codeGenerator.completeIFJNOT(true);
+                    codeGenerator.saveCurrentAddress();
+                    codeGenerator.generatePreliminaryELSEJUMP();
+                }, 5, 6),
+                /* 5 */ new Arc(Graph.STATEMENT,
+                parser -> parser.getCodeGenerator().completeELSEJUMP(),
+                7, Arc.NO_ALTERNATIVE),
+                /* 6 */ new Arc(7,
+                parser -> parser.getCodeGenerator().completeIFJNOT(false)),
                 /* 7 */ Arc.END_ARC
         };
 
