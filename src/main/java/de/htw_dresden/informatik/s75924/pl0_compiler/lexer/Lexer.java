@@ -14,11 +14,11 @@ public class Lexer {
      * EIK can be an identifier or a keyword, EId, must be an Identifier
      */
     private enum State {
-        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, Z_9, Z10, Z11, Z12, ESy, EIK, EId, ENu, EAs, ECo, ELE, ELT, EGE, EGT
+        Z_0, Z_1, Z_2, Z_3, Z_4, Z_5, Z_6, Z_7, Z_8, Z_9, Z10, Z11, Z12, Z13, Z14, ESy, EIK, EId, ENu, EAs, ECo, ELE, ELT, EGE, EGT, ESt
     }
 
     private enum CharacterType {
-        SYMBOL, DIGIT, ALPHA, COLON, EQUALS, LESS, GREATER, OTHER, ALPHA_KEY_START, SLASH, STAR
+        SYMBOL, DIGIT, ALPHA, COLON, EQUALS, LESS, GREATER, OTHER, ALPHA_KEY_START, SLASH, STAR, QUOTE, BACKSLASH
     }
 
     private enum Action {
@@ -46,6 +46,8 @@ public class Lexer {
 
         characterTypeMap.put('*', CharacterType.STAR);
         characterTypeMap.put('/', CharacterType.SLASH);
+        characterTypeMap.put('"', CharacterType.QUOTE);
+        characterTypeMap.put('\\', CharacterType.BACKSLASH);
 
         for (char c = '0'; c <= '9'; c++)
             characterTypeMap.put(c, CharacterType.DIGIT);
@@ -80,37 +82,41 @@ public class Lexer {
     }
 
     private static final State[][] stateTable = {
-            /*       SYMBOL      DIGIT      ALPHA      COLON      EQUALS     LESS       GREATER    OTHER      ALPHA_KS   SLASH      STAR */
-            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.ESy, State.Z_4, State.Z_5, State.Z_0, State.Z_9, State.Z10, State.ESy },
-            /*Z_1*/ { State.EId, State.Z_1, State.Z_1, State.EId, State.EId, State.EId, State.EId, State.EId, State.Z_1, State.EId, State.EId },
-            /*Z_2*/ { State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu },
-            /*Z_3*/ { State.ECo, State.ECo, State.ECo, State.ECo, State.Z_6, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo },
-            /*Z_4*/ { State.ELT, State.ELT, State.ELT, State.ELT, State.Z_7, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT },
-            /*Z_5*/ { State.EGT, State.EGT, State.EGT, State.EGT, State.Z_8, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT },
-            /*Z_6*/ { State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs },
-            /*Z_7*/ { State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE },
-            /*Z_8*/ { State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE },
-            /*Z_9*/ { State.EIK, State.Z_1, State.Z_9, State.EIK, State.EIK, State.EIK, State.EIK, State.EIK, State.Z_9, State.EIK, State.EIK },
-            /*Z10*/ { State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.Z11 },
-            /*Z11*/ { State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z12 },
-            /*Z12*/ { State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z_0, State.Z11 },
+            /*       SYMBOL      DIGIT      ALPHA      COLON      EQUALS     LESS       GREATER    OTHER      ALPHA_KS   SLASH      STAR       QUOTE      BACKSLASH*/
+            /*Z_0*/ { State.ESy, State.Z_2, State.Z_1, State.Z_3, State.ESy, State.Z_4, State.Z_5, State.Z_0, State.Z_9, State.Z10, State.ESy, State.Z13, State.ESy },
+            /*Z_1*/ { State.EId, State.Z_1, State.Z_1, State.EId, State.EId, State.EId, State.EId, State.EId, State.Z_1, State.EId, State.EId, State.EId, State.EId },
+            /*Z_2*/ { State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu, State.ENu },
+            /*Z_3*/ { State.ECo, State.ECo, State.ECo, State.ECo, State.Z_6, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo, State.ECo },
+            /*Z_4*/ { State.ELT, State.ELT, State.ELT, State.ELT, State.Z_7, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT, State.ELT },
+            /*Z_5*/ { State.EGT, State.EGT, State.EGT, State.EGT, State.Z_8, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT, State.EGT },
+            /*Z_6*/ { State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs, State.EAs },
+            /*Z_7*/ { State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE, State.ELE },
+            /*Z_8*/ { State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE, State.EGE },
+            /*Z_9*/ { State.EIK, State.Z_1, State.Z_9, State.EIK, State.EIK, State.EIK, State.EIK, State.EIK, State.Z_9, State.EIK, State.EIK, State.EIK, State.EIK },
+            /*Z10*/ { State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.ESy, State.Z11, State.ESy, State.ESy },
+            /*Z11*/ { State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z12, State.Z11, State.Z11 },
+            /*Z12*/ { State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z11, State.Z_0, State.Z11, State.Z11, State.Z11 },
+            /*Z13*/ { State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.ESt, State.Z14 },
+            /*Z14*/ { State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13, State.Z13 },
     };
 
     private static final Action[][] actionTable = {
-            /*       SYMBOL       DIGIT       ALPHA       COLON       EQUALS      LESS        GREATER     OTHER       ALPHA_KS    SLASH       STAR */
-            /*Z_0*/ { Action.WRE, Action.W_R, Action.W_R, Action.W_R, Action.WRE, Action.W_R, Action.W_R, Action.REA, Action.W_R, Action.W_R, Action.WRE },
-            /*Z_1*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R, Action.END, Action.END },
-            /*Z_2*/ { Action.END, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_3*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_4*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_5*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_6*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END },
-            /*Z_9*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R, Action.END, Action.END },
-            /*Z10*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.REA },
-            /*Z11*/ { Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.CLR },
-            /*Z12*/ { Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.CLR, Action.REA },
+            /*       SYMBOL       DIGIT       ALPHA       COLON       EQUALS      LESS        GREATER     OTHER       ALPHA_KS    SLASH       STAR        QUOTE       BACKSLASH*/
+            /*Z_0*/ { Action.WRE, Action.W_R, Action.W_R, Action.W_R, Action.WRE, Action.W_R, Action.W_R, Action.REA, Action.W_R, Action.W_R, Action.WRE, Action.W_R, Action.WRE },
+            /*Z_1*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R, Action.END, Action.END, Action.END, Action.END },
+            /*Z_2*/ { Action.END, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_3*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_4*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_5*/ { Action.END, Action.END, Action.END, Action.END, Action.W_R, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_6*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_7*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_8*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.END, Action.END, Action.END },
+            /*Z_9*/ { Action.END, Action.W_R, Action.W_R, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.W_R, Action.END, Action.END, Action.END, Action.END },
+            /*Z10*/ { Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.END, Action.REA, Action.END, Action.END, Action.REA, Action.END, Action.END },
+            /*Z11*/ { Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.CLR, Action.REA, Action.REA },
+            /*Z12*/ { Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.REA, Action.CLR, Action.REA, Action.REA, Action.REA },
+            /*Z13*/ { Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.WRE, Action.REA },
+            /*Z14*/ { Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R, Action.W_R },
     };
 
     private FileReader reader;
@@ -219,7 +225,8 @@ public class Lexer {
     }
 
     private void write(){
-        char upper = Character.isAlphabetic(currentChar) ? Character.toUpperCase(currentChar) : currentChar;
+        char upper = (currentState == State.Z13 || currentState == State.Z14) ? currentChar :
+                Character.isAlphabetic(currentChar) ? Character.toUpperCase(currentChar) : currentChar;
 
         if(currentString.equals("")){
             tokenRow = readRow;
@@ -242,6 +249,9 @@ public class Lexer {
                     break;
                 case ENu:
                     next = new Token(TokenType.NUMERAL, Long.parseLong(currentString), tokenRow, tokenColumn);
+                    break;
+                case ESt:
+                    next = new Token(TokenType.STRING, currentString.substring(1, currentString.length() - 1), tokenRow, tokenColumn);
                     break;
                 case ESy:
                 case EAs:

@@ -58,7 +58,7 @@ public class Token {
 
     /**
      * Constructs an IDENTIFIER Token
-     * @param type should be IDENTIFIER
+     * @param type should be IDENTIFIER or STRING
      * @param stringValue the identifier name
      * @param row the row of the token
      * @param column the column of the token
@@ -66,7 +66,7 @@ public class Token {
      */
     public Token(TokenType type, String stringValue, int row, int column) throws InvalidTokenTypeException {
         this(row, column);
-        if (type != TokenType.IDENTIFIER)
+        if (type != TokenType.IDENTIFIER && type!= TokenType.STRING)
             throw new InvalidTokenTypeException();
 
         this.type = type;
@@ -132,6 +132,7 @@ public class Token {
                 value = "" + getCharValue();
                 break;
             case IDENTIFIER:
+            case STRING:
                 value = getStringValue();
                 break;
             case NUMERAL:

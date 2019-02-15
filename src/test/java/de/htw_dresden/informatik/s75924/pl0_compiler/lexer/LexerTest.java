@@ -135,4 +135,30 @@ public class LexerTest {
             fail();
         }
     }
+
+    @Test
+    public void lexT9Correctly() {
+        try {
+            Lexer sut = new Lexer(new FileReader(getClass().getResource("/t9.pl0").getFile()));
+
+            ArrayList<Token> expectedTokens = new ArrayList<>();
+
+            //!"This is a string with an escaped \" quote mark".
+            expectedTokens.add(new Token(TokenType.SYMBOL, '!', 1, 1));
+            expectedTokens.add(new Token(TokenType.STRING, "This is a string with an escaped \" quote mark" , 1, 2));
+            expectedTokens.add(new Token(TokenType.SYMBOL, '.', 1, 50));
+
+            expectedTokens.add(Token.EOF_TOKEN);
+
+            for (Token expectedToken : expectedTokens) {
+                sut.lex();
+                Assert.assertEquals(expectedToken, sut.getCurrentToken());
+            }
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
 }
