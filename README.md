@@ -5,9 +5,11 @@ It uses the rather uncommon graph based approach of a parser, as taught in the c
 
 It does not generate machine code, it generates a byte code that works with the virtual machine supplied in the course.
 
-The grammar implemented has one minor difference to the actual PL/0 grammar: It does not permit *statement* to be empty.
-
-As another additional feature this compiler supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
+## Language
+The grammar implemented has some minor differences to the actual PL/0 grammar: 
+* *Statement* is not permitted to be empty.
+* It supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
+* It permits string output in the form of `!"This is a string with \"escaped quote marks\" and an escaped backslash \\"`. Refer to the syntax graph of `Statement` and the Lexer FSM for details.
 
 ## Requirements
 This project uses Java 8 and maven. If you don't have maven, you can also compile with javac.
