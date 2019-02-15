@@ -57,7 +57,7 @@ class Arc {
      * @param alternative index of alternative arc
      */
     Arc(TokenType tokenType, SemanticRoutine semanticRoutine, int next, int alternative) {
-        this.type = ArcType.IDENTIFIER_OR_NUMERAL;
+        this.type = ArcType.IDENTIFIER_OR_NUMERAL_OR_STRING;
         this.tokenType = tokenType;
         this.semanticRoutine = semanticRoutine;
         this.next = next;

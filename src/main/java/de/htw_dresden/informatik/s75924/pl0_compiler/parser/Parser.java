@@ -54,7 +54,7 @@ public class Parser {
                 case SYMBOL:
                     success = (nextToken.getCharValue() == currentArc.getSymbolValue());
                     break;
-                case IDENTIFIER_OR_NUMERAL:
+                case IDENTIFIER_OR_NUMERAL_OR_STRING:
                     success = (nextToken.getType().equals(currentArc.getTokenType()));
                     break;
                 case GRAPH:
@@ -85,7 +85,7 @@ public class Parser {
 
             else {
                 if (currentArc.getArcType() == ArcType.SYMBOL
-                        || currentArc.getArcType() == ArcType.IDENTIFIER_OR_NUMERAL){
+                        || currentArc.getArcType() == ArcType.IDENTIFIER_OR_NUMERAL_OR_STRING){
                     lexer.lex();
                     backTrackPossible = false;
                 }

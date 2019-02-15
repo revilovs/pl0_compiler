@@ -33,7 +33,7 @@ public class ArcTest {
     @Test
     public void tokenTypeConstructorInitialisesCorrectly() {
         Arc sut = new Arc(TokenType.NUMERAL, null, 1, Arc.NO_ALTERNATIVE);
-        assertEquals(ArcType.IDENTIFIER_OR_NUMERAL, sut.getArcType());
+        assertEquals(ArcType.IDENTIFIER_OR_NUMERAL_OR_STRING, sut.getArcType());
         assertEquals(0,sut.getSymbolValue());
         assertNull(sut.getGraph());
         assertEquals(TokenType.NUMERAL, sut.getTokenType());
