@@ -16,6 +16,8 @@ public class NameList {
 
     private ProcedureEntry currentProcedure = mainProcedure;
 
+    private String lastVariableName;
+
     /**
      * Constructor
      */
@@ -58,6 +60,29 @@ public class NameList {
             throw new InvalidIdentifierException(token, "Identifier already exists, cannot be declared again");
 
         currentProcedure.addVariableEntry(name);
+    }
+
+    /**
+     * Sets the name of a variable for array indexing
+     * @param lastVariableName the name of the last variable
+     */
+    public void setLastVariableName(String lastVariableName) {
+        this.lastVariableName = lastVariableName;
+    }
+
+    /**
+     * @return the name of the last variable
+     */
+    public String getLastVariableName() {
+        return lastVariableName;
+    }
+
+    /**
+     * Converts the last added variable into an array with length items
+     * @param length the number of items in the array
+     */
+    public void makeVariableArray(long length) {
+        currentProcedure.makeVariableArray((int) length);
     }
 
     /**

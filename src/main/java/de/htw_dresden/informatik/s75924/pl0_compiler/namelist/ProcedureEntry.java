@@ -52,6 +52,10 @@ public class ProcedureEntry implements NameListEntry {
         identifiers.add(entry);
     }
 
+    void makeVariableArray(int length){
+        variableRelativeAddressCounter += (4 * (length - 1));
+    }
+
     void addProcedureEntry(ProcedureEntry entry) {
         identifiers.add(entry);
     }

@@ -144,7 +144,13 @@ public enum Graph {
                 },
                 1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc('[', null, 2, 4),
-                /* 2 */ new Arc(TokenType.NUMERAL, null, 3, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(TokenType.NUMERAL,
+                parser -> {
+                    long arraySize = parser.getLexer().getNextToken().getNumberValue();
+
+                    parser.getNameList().makeVariableArray(arraySize);
+                },
+                3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(']', null, 5, Arc.NO_ALTERNATIVE),
                 /* 4 */ new Arc(5),
                 /* 5 */ Arc.END_ARC
@@ -190,7 +196,18 @@ public enum Graph {
                 }, 1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc('[', null, 2, 4),
                 /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(']', null, 5, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(']',
+                parser -> {
+                    NameList nameList = parser.getNameList();
+                    nameList.addConstant(4);
+                    int index = nameList.getIndexOfConstant(4);
+
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                    codeGenerator.generatePushConstant(index);
+                    codeGenerator.generateMultiplyOperator();
+                    codeGenerator.generateAddOperator();
+                }, 5, Arc.NO_ALTERNATIVE),
                 /* 4 */ new Arc(5),
                 /* 5 */ new Arc(SpecialCharacter.ASSIGN.value, null, 6, Arc.NO_ALTERNATIVE),
                 /* 6 */ new Arc(EXPRESSION,
@@ -340,11 +357,55 @@ public enum Graph {
                 /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(')', null, 9, Arc.NO_ALTERNATIVE),
                 /* 4 */ new Arc(TokenType.IDENTIFIER,
+                parser -> parser.getNameList().setLastVariableName(parser.getLexer().getNextToken().getStringValue()),
+                5, Arc.NO_ALTERNATIVE),
+                /* 5 */ new Arc('[',
                 parser -> {
                     NameList nameList = parser.getNameList();
                     CodeGenerator codeGenerator = parser.getCodeGenerator();
                     Token token = parser.getLexer().getNextToken();
-                    String identifier = token.getStringValue();
+                    String identifier = nameList.getLastVariableName();
+
+                    NameListEntry entry = nameList.findIdentifier(identifier);
+
+                    if (entry != null) {
+                        if (entry instanceof VariableEntry) {
+                            VariableEntry variableEntry = (VariableEntry) entry;
+
+                            boolean isLocal = nameList.entryIsLocal(variableEntry);
+                            boolean isMain = nameList.entryIsInMain(variableEntry);
+                            int displacement = variableEntry.getRelativeAddress();
+                            int procedureIndex = variableEntry.getProcedureIndex();
+
+                            codeGenerator.generatePushVariableAddress(displacement, procedureIndex, isLocal, isMain);
+                        }
+                        else
+                            throw new InvalidIdentifierException(token, "Indexing only possible on variables");
+                    }
+                    else
+                        throw new InvalidIdentifierException(token, "Identifier not found");
+                }, 6, 8),
+                /* 6 */ new Arc(EXPRESSION, null, 7, Arc.NO_ALTERNATIVE),
+                /* 7 */ new Arc(']',
+                parser -> {
+                    NameList nameList = parser.getNameList();
+                    nameList.addConstant(4);
+                    int index = nameList.getIndexOfConstant(4);
+
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                    codeGenerator.generatePushConstant(index);
+                    codeGenerator.generateMultiplyOperator();
+                    codeGenerator.generateAddOperator();
+                    codeGenerator.generateSwap();
+
+                }, 9, Arc.NO_ALTERNATIVE),
+                /* 8 */ new Arc(9,
+                parser -> {
+                    NameList nameList = parser.getNameList();
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+                    Token token = parser.getLexer().getNextToken();
+                    String identifier = nameList.getLastVariableName();
 
                     NameListEntry entry = nameList.findIdentifier(identifier);
                     if (entry != null){
@@ -371,11 +432,7 @@ public enum Graph {
                     }
                     else
                         throw new InvalidIdentifierException(token, "Identifier not found");
-                }, 5, Arc.NO_ALTERNATIVE),
-                /* 5 */ new Arc('[', null, 6, 8),
-                /* 6 */ new Arc(EXPRESSION, null, 7, Arc.NO_ALTERNATIVE),
-                /* 7 */ new Arc(']', null, 9, Arc.NO_ALTERNATIVE),
-                /* 8 */ new Arc(9),
+                }),
                 /* 9 */ Arc.END_ARC
         };
 

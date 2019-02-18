@@ -333,6 +333,14 @@ public class CodeGenerator {
     }
 
     /**
+     * Generates the SWAP operation code
+     * @throws IOException if an I/O error occurs while writing
+     */
+    public void generateSwap() throws IOException {
+        outputFile.write(OperationCode.SWAP.code);
+    }
+
+    /**
      * Writes the constant block to the output file
      * @param constantBlock the constant block
      * @throws IOException if an I/O error occurs while writing
