@@ -43,6 +43,8 @@ public class Lexer {
         characterTypeMap.put('?', CharacterType.SYMBOL);
         characterTypeMap.put('!', CharacterType.SYMBOL);
         characterTypeMap.put('#', CharacterType.SYMBOL);
+        characterTypeMap.put('[', CharacterType.SYMBOL);
+        characterTypeMap.put(']', CharacterType.SYMBOL);
 
         characterTypeMap.put('*', CharacterType.STAR);
         characterTypeMap.put('/', CharacterType.SLASH);

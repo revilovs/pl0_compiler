@@ -143,7 +143,11 @@ public enum Graph {
                     nameList.addVariable(token);
                 },
                 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ Arc.END_ARC
+                /* 1 */ new Arc('[', null, 2, 4),
+                /* 2 */ new Arc(TokenType.NUMERAL, null, 3, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(']', null, 5, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(5),
+                /* 5 */ Arc.END_ARC
         };
         
         STATEMENT.arcs = new Arc[] {
@@ -184,10 +188,14 @@ public enum Graph {
                     else
                         throw new InvalidIdentifierException(lexer.getNextToken(), "Identifier not found");
                 }, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(SpecialCharacter.ASSIGN.value, null, 2, Arc.NO_ALTERNATIVE),
-                /* 2 */ new Arc(EXPRESSION,
-                parser -> parser.getCodeGenerator().generateStoreValue(), 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ Arc.END_ARC
+                /* 1 */ new Arc('[', null, 2, 4),
+                /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(']', null, 5, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(5),
+                /* 5 */ new Arc(SpecialCharacter.ASSIGN.value, null, 6, Arc.NO_ALTERNATIVE),
+                /* 6 */ new Arc(EXPRESSION,
+                parser -> parser.getCodeGenerator().generateStoreValue(), 7, Arc.NO_ALTERNATIVE),
+                /* 7 */ Arc.END_ARC
         };
 
         CONDITIONAL_STATEMENT.arcs = new Arc[] {
@@ -327,10 +335,10 @@ public enum Graph {
 
                     codeGenerator.generatePushConstant(constantIndex);
 
-                }, 5, 1),
+                }, 9, 1),
                 /* 1 */ new Arc('(', null, 2, 4),
                 /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(')', null, 5, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(')', null, 9, Arc.NO_ALTERNATIVE),
                 /* 4 */ new Arc(TokenType.IDENTIFIER,
                 parser -> {
                     NameList nameList = parser.getNameList();
@@ -364,7 +372,11 @@ public enum Graph {
                     else
                         throw new InvalidIdentifierException(token, "Identifier not found");
                 }, 5, Arc.NO_ALTERNATIVE),
-                /* 5 */ Arc.END_ARC
+                /* 5 */ new Arc('[', null, 6, 8),
+                /* 6 */ new Arc(EXPRESSION, null, 7, Arc.NO_ALTERNATIVE),
+                /* 7 */ new Arc(']', null, 9, Arc.NO_ALTERNATIVE),
+                /* 8 */ new Arc(9),
+                /* 9 */ Arc.END_ARC
         };
 
         CONDITION.arcs = new Arc[] {
