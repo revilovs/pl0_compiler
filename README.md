@@ -23,24 +23,24 @@ end.
 See the syntax graphs of [Variable declaration](#variable-declaration) [Factor](#factor), [Assignment statement](#assignment-statement), [Input statement](#input-statement) and [Array Index](#array-index) for details
 
 This is the complete EBNF:
-```
-PROGRAM = BLOCK, "."
+```ebnf
+PROGRAM = BLOCK, ".";
 BLOCK   = [ CONST_DECLARATION_LIST ], 
     [ VAR_DECLARATION_LIST ], 
     [ PROCEDURE_DECLARATION ], 
-    STATEMENT
+    STATEMENT;
 
 CONST_DECLARATION_LIST = "CONST", 
     CONSTANT_DECLARATION, 
     { ",", CONSTANT_DECLARATION }, 
-    ";"
-CONST_DECLARATION      = IDENTIFIER, "=", NUMERAL
+    ";";
+CONST_DECLARATION      = IDENTIFIER, "=", NUMERAL;
 VAR_DECLARATION_LIST   = "VAR", 
     VAR_DECLARATION, 
     { ",", VAR_DECLARATION }, 
-    ";"
-VAR_DECLARATION        = IDENTIFIER, [ "[", NUMERAL "]" ]
-PROCEDURE_DECLARATION  = "PROCEDURE", IDENTIFIER, ";", BLOCK, ";"
+    ";";
+VAR_DECLARATION        = IDENTIFIER, [ "[", NUMERAL "]" ];
+PROCEDURE_DECLARATION  = "PROCEDURE", IDENTIFIER, ";", BLOCK, ";";
 
 STATEMENT = ASSIGNMENT_STATEMENT
     | CONDITIONAL_STATEMENT
@@ -48,34 +48,34 @@ STATEMENT = ASSIGNMENT_STATEMENT
     | COMPOUND_STATEMENT
     | PROCEDURE_CALL
     | INPUT_STATEMENT
-    | OUTPUT_STATEMENT
+    | OUTPUT_STATEMENT;
 
-ASSIGNMENT_STATEMENT  = IDENTIFIER, [ ARRAY_INDEX ], := EXPRESSION
-CONDITIONAL_STATEMENT = "IF", CONDITION, "THEN", STATEMENT, [ "ELSE", STATEMENT ]
-LOOP_STATEMENT        = "WHILE", CONDITION, "DO", STATEMENT
-COMPOUND_STATEMENT    = "BEGIN", STATEMENT, { ";", STATEMENT }, "END"
-PROCEDURE_CALL        = "CALL", IDENTIFIER
-INPUT_STATEMENT       = "?" IDENTIFIER, [ ARRAY_INDEX ]
+ASSIGNMENT_STATEMENT  = IDENTIFIER, [ ARRAY_INDEX ], := EXPRESSION;
+CONDITIONAL_STATEMENT = "IF", CONDITION, "THEN", STATEMENT, [ "ELSE", STATEMENT ];
+LOOP_STATEMENT        = "WHILE", CONDITION, "DO", STATEMENT;
+COMPOUND_STATEMENT    = "BEGIN", STATEMENT, { ";", STATEMENT }, "END";
+PROCEDURE_CALL        = "CALL", IDENTIFIER;
+INPUT_STATEMENT       = "?" IDENTIFIER, [ ARRAY_INDEX ];
 OUTPUT_STATEMENT      = "!", 
     (
         EXPRESSION
         | '"', STRING, '"'
-    )
+    );
 
-ARRAY_INDEX = "[", EXPRESSION, "]"
+ARRAY_INDEX = "[", EXPRESSION, "]";
 
 CONDITION = ( "ODD", EXPRESSION ) 
     | ( 
         EXPRESSION, 
         ( "=" | "#" | ">" | ">=" | "<" | "<=" ),
         EXPRSSION
-    )
+    );
 
-EXPRESSION = [ "-" ], TERM, { ( "+" | "-" ), TERM }
-TERM       = FACTOR, { ( "*" | "/" ), FACTOR }
+EXPRESSION = [ "-" ], TERM, { ( "+" | "-" ), TERM };
+TERM       = FACTOR, { ( "*" | "/" ), FACTOR };
 FACTOR     = NUMERAL
     | "(", EXPRESSION, ")"
-    | IDENTIFIER, [ ARRAY_INDEX ]
+    | IDENTIFIER, [ ARRAY_INDEX ];
 ```
 
 ## Requirements
