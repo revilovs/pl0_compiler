@@ -30,7 +30,10 @@ public enum Graph {
     TERM,
     FACTOR,
     CONDITION,
-    ARRAY_INDEX;
+    ARRAY_INDEX,
+    LOGICAL_EXPRESSION,
+    LOGICAL_TERM,
+    LOGICAL_FACTOR;
 
     /*
       This is necessary because of the circular reference between the graphs
@@ -207,7 +210,7 @@ public enum Graph {
 
         CONDITIONAL_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.IF.value, null, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(CONDITION,
+                /* 1 */ new Arc(LOGICAL_EXPRESSION,
                 parser -> {
                     CodeGenerator codeGenerator = parser.getCodeGenerator();
 
@@ -235,7 +238,7 @@ public enum Graph {
         LOOP_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.WHILE.value,
                 parser -> parser.getCodeGenerator().saveCurrentAddress(), 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc(CONDITION,
+                /* 1 */ new Arc(LOGICAL_EXPRESSION,
                 parser -> {
                     CodeGenerator codeGenerator = parser.getCodeGenerator();
 
@@ -460,6 +463,32 @@ public enum Graph {
                 },
                 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ Arc.END_ARC
+        };
+
+        LOGICAL_EXPRESSION.arcs = new Arc[] {
+                /* 0 */ new Arc(LOGICAL_TERM, null, 1, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(SpecialCharacter.OR.value, null, 2, 3),
+                /* 2 */ new Arc(LOGICAL_TERM, null, 3, Arc.NO_ALTERNATIVE),
+                /* 3 */ Arc.END_ARC
+        };
+
+        LOGICAL_TERM.arcs = new Arc[] {
+                /* 0 */ new Arc(SpecialCharacter.NOT.value, null, 1, 2),
+                /* 1 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(SpecialCharacter.AND.value, null, 4, 7),
+                /* 4 */ new Arc(SpecialCharacter.NOT.value, null, 5, 6),
+                /* 5 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 6 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 7 */ Arc.END_ARC
+        };
+
+        LOGICAL_FACTOR.arcs = new Arc[] {
+                /* 0 */ new Arc(CONDITION, null, 4, 1),
+                /* 1 */ new Arc('{', null, 2, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(LOGICAL_EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc('}', null, 4, Arc.NO_ALTERNATIVE),
+                /* 4 */ Arc.END_ARC
         };
     }
 

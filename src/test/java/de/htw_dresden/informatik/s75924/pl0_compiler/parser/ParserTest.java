@@ -60,6 +60,11 @@ public class ParserTest {
     }
 
     @Test
+    public void parseT12WithoutErrors() throws IOException, FatalSemanticRoutineException {
+        parseFileWithoutErrors("/t12.pl0");
+    }
+
+    @Test
     public void parseFakultaetWithoutErrors() throws IOException, FatalSemanticRoutineException {
         parseFileWithoutErrors("/fakultaet.pl0");
     }

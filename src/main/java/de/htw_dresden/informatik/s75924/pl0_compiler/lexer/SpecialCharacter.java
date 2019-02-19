@@ -21,7 +21,10 @@ public enum SpecialCharacter {
     THEN(139),
     VAR(140),
     WHILE(141),
-    ELSE(142);
+    ELSE(142),
+    NOT(143),
+    AND(144),
+    OR(145);
 
     public char value;
 

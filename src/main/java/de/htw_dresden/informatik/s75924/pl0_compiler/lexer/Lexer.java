@@ -45,7 +45,9 @@ public class Lexer {
         characterTypeMap.put('#', CharacterType.SYMBOL);
         characterTypeMap.put('[', CharacterType.SYMBOL);
         characterTypeMap.put(']', CharacterType.SYMBOL);
-
+        characterTypeMap.put('{', CharacterType.SYMBOL);
+        characterTypeMap.put('}', CharacterType.SYMBOL)
+;
         characterTypeMap.put('*', CharacterType.STAR);
         characterTypeMap.put('/', CharacterType.SLASH);
         characterTypeMap.put('"', CharacterType.QUOTE);
@@ -60,22 +62,26 @@ public class Lexer {
         for (char c = 'A'; c <= 'Z'; c++)
             characterTypeMap.put(c, CharacterType.ALPHA);
 
+        characterTypeMap.put('a', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('b', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('c', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('d', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('e', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('i', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('n', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('o', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('p', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('t', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('v', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('w', CharacterType.ALPHA_KEY_START);
 
+        characterTypeMap.put('A', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('B', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('C', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('D', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('E', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('I', CharacterType.ALPHA_KEY_START);
+        characterTypeMap.put('N', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('O', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('P', CharacterType.ALPHA_KEY_START);
         characterTypeMap.put('T', CharacterType.ALPHA_KEY_START);
