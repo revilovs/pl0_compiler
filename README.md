@@ -6,7 +6,7 @@ It uses the rather uncommon graph based approach of a parser, as taught in the c
 It does not generate machine code, it generates a byte code that works with the virtual machine supplied in the course.
 
 ## Language
-The grammar implemented has some minor differences to the actual PL/0 grammar: 
+The grammar implemented has some additional features that the actual PL/0 grammar doesn't have: 
 * `Statement` is not permitted to be empty.
 * It supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
 * It permits string output in the form of `!"This is a string with \"escaped quote marks\" and an escaped backslash \\"`. Refer to the [syntax graph of Statement](#statement) and the [Lexer FSM](#lexer) for details.
@@ -21,6 +21,7 @@ begin
 end.
 ```
 See the syntax graphs of [Variable declaration](#variable-declaration) [Factor](#factor), [Assignment statement](#assignment-statement), [Input statement](#input-statement) and [Array Index](#array-index) for details
+* It supports logical expressions in the conditions for loops and conditionals, with operators `NOT`, `OR`, `AND` and curly braces `{}`. See the graphs for [Logical expression](#logical-expression), [Logical term](#logical-term), and [Logical factor](#logical-factor) as well as [Conditional statement](#conditional-statement) and [Loop statement](#loop-statement).
 
 This is the complete EBNF:
 ```ebnf
@@ -51,8 +52,8 @@ STATEMENT = ASSIGNMENT_STATEMENT
     | OUTPUT_STATEMENT;
 
 ASSIGNMENT_STATEMENT  = IDENTIFIER, [ ARRAY_INDEX ], := EXPRESSION;
-CONDITIONAL_STATEMENT = "IF", CONDITION, "THEN", STATEMENT, [ "ELSE", STATEMENT ];
-LOOP_STATEMENT        = "WHILE", CONDITION, "DO", STATEMENT;
+CONDITIONAL_STATEMENT = "IF", LOGICAL_EXPRESSION, "THEN", STATEMENT, [ "ELSE", STATEMENT ];
+LOOP_STATEMENT        = "WHILE", LOGICAL_EXPRESSION, "DO", STATEMENT;
 COMPOUND_STATEMENT    = "BEGIN", STATEMENT, { ";", STATEMENT }, "END";
 PROCEDURE_CALL        = "CALL", IDENTIFIER;
 INPUT_STATEMENT       = "?" IDENTIFIER, [ ARRAY_INDEX ];
@@ -76,6 +77,15 @@ TERM       = FACTOR, { ( "*" | "/" ), FACTOR };
 FACTOR     = NUMERAL
     | "(", EXPRESSION, ")"
     | IDENTIFIER, [ ARRAY_INDEX ];
+
+LOGICAL_EXPRESSION = LOGICAL_TERM, { "OR", LOGICAL_TERM };
+LOGICAL_TERM       = [ "NOT" ], LOGICAL_FACTOR, { "AND", [ "NOT" ], LOGICAL_FACTOR };
+LOGICAL_FACTOR     = CONDITION
+    | (
+        "{",
+        LOGICAL_EXPRESSION,
+        "}"
+    );
 ```
 
 ## Requirements
@@ -174,3 +184,12 @@ The implemented grammar is described by syntax graphs, which are implemented in 
 
 ### Array Index
 ![Graph for array index](doc/graphs/arrayIndex.png)
+
+### Logical expression
+![Graph for logical expression](doc/graphs/logicalExpression.png)
+
+### Logical term
+![Graph for logical term](doc/graphs/logicalTerm.png)
+
+### Logical factor
+![Graph for logical factor](doc/graphs/logicalFactor.png)
