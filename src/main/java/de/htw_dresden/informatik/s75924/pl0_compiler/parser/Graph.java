@@ -29,7 +29,8 @@ public enum Graph {
     EXPRESSION,
     TERM,
     FACTOR,
-    CONDITION;
+    CONDITION,
+    ARRAY_INDEX;
 
     /*
       This is necessary because of the circular reference between the graphs
@@ -169,11 +170,15 @@ public enum Graph {
 
         ASSIGNMENT_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc(TokenType.IDENTIFIER,
+                parser -> parser.getNameList().setLastVariableName(parser.getLexer().getNextToken().getStringValue()),
+                1, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(ARRAY_INDEX, null, 3, 2),
+                /* 2 */ new Arc(3,
                 parser -> {
                     NameList nameList = parser.getNameList();
                     Lexer lexer = parser.getLexer();
 
-                    String identifier = lexer.getNextToken().getStringValue();
+                    String identifier = nameList.getLastVariableName();
 
                     NameListEntry entry = nameList.findIdentifier(identifier);
                     if (entry!= null){
@@ -193,26 +198,11 @@ public enum Graph {
                     }
                     else
                         throw new InvalidIdentifierException(lexer.getNextToken(), "Identifier not found");
-                }, 1, Arc.NO_ALTERNATIVE),
-                /* 1 */ new Arc('[', null, 2, 4),
-                /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(']',
-                parser -> {
-                    NameList nameList = parser.getNameList();
-                    nameList.addConstant(4);
-                    int index = nameList.getIndexOfConstant(4);
-
-                    CodeGenerator codeGenerator = parser.getCodeGenerator();
-
-                    codeGenerator.generatePushConstant(index);
-                    codeGenerator.generateMultiplyOperator();
-                    codeGenerator.generateAddOperator();
-                }, 5, Arc.NO_ALTERNATIVE),
-                /* 4 */ new Arc(5),
-                /* 5 */ new Arc(SpecialCharacter.ASSIGN.value, null, 6, Arc.NO_ALTERNATIVE),
-                /* 6 */ new Arc(EXPRESSION,
-                parser -> parser.getCodeGenerator().generateStoreValue(), 7, Arc.NO_ALTERNATIVE),
-                /* 7 */ Arc.END_ARC
+                }),
+                /* 3 */ new Arc(SpecialCharacter.ASSIGN.value, null, 4, Arc.NO_ALTERNATIVE),
+                /* 4 */ new Arc(EXPRESSION,
+                parser -> parser.getCodeGenerator().generateStoreValue(), 5, Arc.NO_ALTERNATIVE),
+                /* 5 */ Arc.END_ARC
         };
 
         CONDITIONAL_STATEMENT.arcs = new Arc[] {
@@ -295,12 +285,18 @@ public enum Graph {
         INPUT_STATEMENT.arcs = new Arc[] {
                 /* 0 */ new Arc('?', null, 1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc(TokenType.IDENTIFIER,
-                (parser) -> {
-                    ASSIGNMENT_STATEMENT.arcs[0].getSemanticRoutine().apply(parser);
+                (parser) -> parser.getNameList().setLastVariableName(parser.getLexer().getNextToken().getStringValue()),
+                2, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(ARRAY_INDEX,
+                parser -> parser.getCodeGenerator().generateGetValue(),
+                4, 3),
+                /* 3 */ new Arc(4,
+                parser -> {
+                    ASSIGNMENT_STATEMENT.arcs[2].getSemanticRoutine().apply(parser);
 
                     parser.getCodeGenerator().generateGetValue();
-                }, 2, Arc.NO_ALTERNATIVE),
-                /* 2 */ Arc.END_ARC
+                }),
+                /* 4 */ Arc.END_ARC
         };
 
         OUTPUT_STATEMENT.arcs = new Arc[] {
@@ -352,55 +348,17 @@ public enum Graph {
 
                     codeGenerator.generatePushConstant(constantIndex);
 
-                }, 9, 1),
+                }, 7, 1),
                 /* 1 */ new Arc('(', null, 2, 4),
                 /* 2 */ new Arc(EXPRESSION, null, 3, Arc.NO_ALTERNATIVE),
-                /* 3 */ new Arc(')', null, 9, Arc.NO_ALTERNATIVE),
+                /* 3 */ new Arc(')', null, 7, Arc.NO_ALTERNATIVE),
                 /* 4 */ new Arc(TokenType.IDENTIFIER,
                 parser -> parser.getNameList().setLastVariableName(parser.getLexer().getNextToken().getStringValue()),
                 5, Arc.NO_ALTERNATIVE),
-                /* 5 */ new Arc('[',
-                parser -> {
-                    NameList nameList = parser.getNameList();
-                    CodeGenerator codeGenerator = parser.getCodeGenerator();
-                    Token token = parser.getLexer().getNextToken();
-                    String identifier = nameList.getLastVariableName();
-
-                    NameListEntry entry = nameList.findIdentifier(identifier);
-
-                    if (entry != null) {
-                        if (entry instanceof VariableEntry) {
-                            VariableEntry variableEntry = (VariableEntry) entry;
-
-                            boolean isLocal = nameList.entryIsLocal(variableEntry);
-                            boolean isMain = nameList.entryIsInMain(variableEntry);
-                            int displacement = variableEntry.getRelativeAddress();
-                            int procedureIndex = variableEntry.getProcedureIndex();
-
-                            codeGenerator.generatePushVariableAddress(displacement, procedureIndex, isLocal, isMain);
-                        }
-                        else
-                            throw new InvalidIdentifierException(token, "Indexing only possible on variables");
-                    }
-                    else
-                        throw new InvalidIdentifierException(token, "Identifier not found");
-                }, 6, 8),
-                /* 6 */ new Arc(EXPRESSION, null, 7, Arc.NO_ALTERNATIVE),
-                /* 7 */ new Arc(']',
-                parser -> {
-                    NameList nameList = parser.getNameList();
-                    nameList.addConstant(4);
-                    int index = nameList.getIndexOfConstant(4);
-
-                    CodeGenerator codeGenerator = parser.getCodeGenerator();
-
-                    codeGenerator.generatePushConstant(index);
-                    codeGenerator.generateMultiplyOperator();
-                    codeGenerator.generateAddOperator();
-                    codeGenerator.generateSwap();
-
-                }, 9, Arc.NO_ALTERNATIVE),
-                /* 8 */ new Arc(9,
+                /* 5 */ new Arc(ARRAY_INDEX,
+                parser -> parser.getCodeGenerator().generateSwap(),
+                7, 6),
+                /* 6 */ new Arc(7,
                 parser -> {
                     NameList nameList = parser.getNameList();
                     CodeGenerator codeGenerator = parser.getCodeGenerator();
@@ -433,7 +391,7 @@ public enum Graph {
                     else
                         throw new InvalidIdentifierException(token, "Identifier not found");
                 }),
-                /* 9 */ Arc.END_ARC
+                /* 7 */ Arc.END_ARC
         };
 
         CONDITION.arcs = new Arc[] {
@@ -456,6 +414,52 @@ public enum Graph {
                 /*  9 */ new Arc(EXPRESSION,
                 parser -> parser.getCodeGenerator().generateComparisonOperator(), 10, Arc.NO_ALTERNATIVE),
                 /* 10 */ Arc.END_ARC
+        };
+
+        ARRAY_INDEX.arcs = new Arc[] {
+                /* 0 */ new Arc('[',
+                parser -> {
+                    NameList nameList = parser.getNameList();
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+                    Token token = parser.getLexer().getNextToken();
+
+                    String identifier = nameList.getLastVariableName();
+
+                    NameListEntry entry = nameList.findIdentifier(identifier);
+
+                    if (entry != null) {
+                        if (entry instanceof VariableEntry) {
+                            VariableEntry variableEntry = (VariableEntry) entry;
+
+                            boolean isLocal = nameList.entryIsLocal(variableEntry);
+                            boolean isMain = nameList.entryIsInMain(variableEntry);
+                            int displacement = variableEntry.getRelativeAddress();
+                            int procedureIndex = variableEntry.getProcedureIndex();
+
+                            codeGenerator.generatePushVariableAddress(displacement, procedureIndex, isLocal, isMain);
+                        }
+                        else
+                            throw new InvalidIdentifierException(token, "Indexing only possible on variables");
+                    }
+                    else
+                        throw new InvalidIdentifierException(token, "Identifier not found");
+                },
+                1, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(EXPRESSION, null, 2, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(']',
+                parser -> {
+                    NameList nameList = parser.getNameList();
+                    nameList.addConstant(4);
+                    int index = nameList.getIndexOfConstant(4);
+
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+
+                    codeGenerator.generatePushConstant(index);
+                    codeGenerator.generateMultiplyOperator();
+                    codeGenerator.generateAddOperator();
+                },
+                3, Arc.NO_ALTERNATIVE),
+                /* 3 */ Arc.END_ARC
         };
     }
 
