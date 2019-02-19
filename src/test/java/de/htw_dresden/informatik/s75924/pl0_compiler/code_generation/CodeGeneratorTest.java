@@ -88,6 +88,11 @@ public class CodeGeneratorTest {
     }
 
     @Test
+    public void generateT12correctly() {
+        compileFileCorrectly("/t12.pl0", "/t12.cl0");
+    }
+
+    @Test
     public void generateFakultaetCorrectly() {
         compileFileCorrectly("/fakultaet.pl0", "/fakultaet.cl0");
     }

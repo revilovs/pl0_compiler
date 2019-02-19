@@ -468,18 +468,37 @@ public enum Graph {
         LOGICAL_EXPRESSION.arcs = new Arc[] {
                 /* 0 */ new Arc(LOGICAL_TERM, null, 1, Arc.NO_ALTERNATIVE),
                 /* 1 */ new Arc(SpecialCharacter.OR.value, null, 2, 3),
-                /* 2 */ new Arc(LOGICAL_TERM, null, 3, Arc.NO_ALTERNATIVE),
+                /* 2 */ new Arc(LOGICAL_TERM,
+                parser -> parser.getCodeGenerator().generateAddOperator(),
+                3, Arc.NO_ALTERNATIVE),
                 /* 3 */ Arc.END_ARC
         };
 
         LOGICAL_TERM.arcs = new Arc[] {
                 /* 0 */ new Arc(SpecialCharacter.NOT.value, null, 1, 2),
-                /* 1 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 1 */ new Arc(LOGICAL_FACTOR,
+                parser -> {
+                    CodeGenerator codeGenerator = parser.getCodeGenerator();
+                    NameList nameList = parser.getNameList();
+
+                    nameList.addConstant(1);
+                    int index = nameList.getIndexOfConstant(1);
+
+                    codeGenerator.generatePushConstant(index);
+                    codeGenerator.setComparisonOperator('<');
+                    codeGenerator.generateComparisonOperator();
+                }, 3, Arc.NO_ALTERNATIVE),
                 /* 2 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
                 /* 3 */ new Arc(SpecialCharacter.AND.value, null, 4, 7),
                 /* 4 */ new Arc(SpecialCharacter.NOT.value, null, 5, 6),
-                /* 5 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
-                /* 6 */ new Arc(LOGICAL_FACTOR, null, 3, Arc.NO_ALTERNATIVE),
+                /* 5 */ new Arc(LOGICAL_FACTOR,
+                parser -> {
+                    LOGICAL_TERM.arcs[1].getSemanticRoutine().apply(parser);
+
+                    parser.getCodeGenerator().generateMultiplyOperator();
+                }, 3, Arc.NO_ALTERNATIVE),
+                /* 6 */ new Arc(LOGICAL_FACTOR,
+                parser -> parser.getCodeGenerator().generateMultiplyOperator(), 3, Arc.NO_ALTERNATIVE),
                 /* 7 */ Arc.END_ARC
         };
 
