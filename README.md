@@ -11,6 +11,72 @@ The grammar implemented has some minor differences to the actual PL/0 grammar:
 * It supports comments in the C-style `/* your comment here */` syntax (also works across multiple lines). It does not support ` // single line comments in this style`, however.
 * It permits string output in the form of `!"This is a string with \"escaped quote marks\" and an escaped backslash \\"`. Refer to the [syntax graph of Statement](#statement) and the [Lexer FSM](#lexer) for details.
 * It permits conditional statements with `ELSE` branches. See the [Conditional Statement graph](#conditional-statement)
+* It allows arrays of variables:
+```
+var index, b[3];
+begin
+    ?index;
+    ?b[index]
+    !b[index]
+end.
+```
+See the syntax graphs of [Variable declaration](#variable-declaration) [Factor](#factor), [Assignment statement](#assignment-statement), [Input statement](#input-statement) and [Array Index](#array-index) for details
+
+This is the complete EBNF:
+```
+PROGRAM = BLOCK, "."
+BLOCK   = [ CONST_DECLARATION_LIST ], 
+    [ VAR_DECLARATION_LIST ], 
+    [ PROCEDURE_DECLARATION ], 
+    STATEMENT
+
+CONST_DECLARATION_LIST = "CONST", 
+    CONSTANT_DECLARATION, 
+    { ",", CONSTANT_DECLARATION }, 
+    ";"
+CONST_DECLARATION      = IDENTIFIER, "=", NUMERAL
+VAR_DECLARATION_LIST   = "VAR", 
+    VAR_DECLARATION, 
+    { ",", VAR_DECLARATION }, 
+    ";"
+VAR_DECLARATION        = IDENTIFIER, [ "[", NUMERAL "]" ]
+PROCEDURE_DECLARATION  = "PROCEDURE", IDENTIFIER, ";", BLOCK, ";"
+
+STATEMENT = ASSIGNMENT_STATEMENT
+    | CONDITIONAL_STATEMENT
+    | LOOP_STATEMENT
+    | COMPOUND_STATEMENT
+    | PROCEDURE_CALL
+    | INPUT_STATEMENT
+    | OUTPUT_STATEMENT
+
+ASSIGNMENT_STATEMENT  = IDENTIFIER, [ ARRAY_INDEX ], := EXPRESSION
+CONDITIONAL_STATEMENT = "IF", CONDITION, "THEN", STATEMENT, [ "ELSE", STATEMENT ]
+LOOP_STATEMENT        = "WHILE", CONDITION, "DO", STATEMENT
+COMPOUND_STATEMENT    = "BEGIN", STATEMENT, { ";", STATEMENT }, "END"
+PROCEDURE_CALL        = "CALL", IDENTIFIER
+INPUT_STATEMENT       = "?" IDENTIFIER, [ ARRAY_INDEX ]
+OUTPUT_STATEMENT      = "!", 
+    (
+        EXPRESSION
+        | '"', STRING, '"'
+    )
+
+ARRAY_INDEX = "[", EXPRESSION, "]"
+
+CONDITION = ( "ODD", EXPRESSION ) 
+    | ( 
+        EXPRESSION, 
+        ( "=" | "#" | ">" | ">=" | "<" | "<=" ),
+        EXPRSSION
+    )
+
+EXPRESSION = [ "-" ], TERM, { ( "+" | "-" ), TERM }
+TERM       = FACTOR, { ( "*" | "/" ), FACTOR }
+FACTOR     = NUMERAL
+    | "(", EXPRESSION, ")"
+    | IDENTIFIER, [ ARRAY_INDEX ]
+```
 
 ## Requirements
 This project uses Java 8 and maven. If you don't have maven, you can also compile with javac.
@@ -105,3 +171,6 @@ The implemented grammar is described by syntax graphs, which are implemented in 
 
 ### Condition
 ![Graph for condition](doc/graphs/condition.png)
+
+### Array Index
+![Graph for array index](doc/graphs/arrayIndex.png)
