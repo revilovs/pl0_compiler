@@ -134,7 +134,7 @@ The implemented grammar is described by syntax graphs, which are implemented in 
 ### Constant declaration list
 ![Graph for constant declaration list](doc/graphs/constantDeclarationList.png)
 
-### Constant declaration list
+### Constant declaration
 ![Graph for constant declaration](doc/graphs/constantDeclaration.png)
 
 ### Variable declaration list
